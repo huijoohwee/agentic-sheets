@@ -4,7 +4,7 @@
     "id": "shared-ui",
     "owner": "github.com/huijoohwee/agentic-design-system",
     "sourceRevision": "e52a52111f52b6af85f99195ec9e59a490548575",
-    "registryRevision": "44e35fa46a5184a0fddab862c208e9479cd6812b",
+    "registryRevision": "7672dcb14dff7011c4107f7afea19885329402a3",
     "sourcePath": "site/tokens/shared-ui-profile.json",
     "sourceSha256": "sha256:e5915b4b22dc861a80478e7b99dd27ecd41022ed755544812d6b74b2d4ea60dd",
     "projectionPath": "site/vendor/shared-ui-profile.css",
@@ -49,7 +49,7 @@
   },
   "icons": {
     "sourcePath": "site/icons.json",
-    "sha256": "sha256:8ae9c970e70e9947496bde996af86ce2ca9291fcd6f1cfafae6e417071f33468"
+    "sha256": "sha256:c01cbadd47648837bb8514f6f88f20ad72ee36e1e53aaabff950be2e6214a0b6"
   },
   "notices": {
     "sourcePath": "site/THIRD-PARTY-NOTICES.txt",
@@ -57,10 +57,14 @@
   },
   "skillsCommands": {
     "sourcePath": "site/skills-commands.js",
-    "sha256": "sha256:4414bbde69076eca72d41d42380688b61d67a53a7e58c55ebbf46f271c8b40ad"
+    "sha256": "sha256:ac0f0853eb9a96f1bf3094b441cae6b340c89a781d17d2212c02746889075fcb"
   },
   "skillsCommandsStyles": {
     "sourcePath": "site/skills-commands.css",
-    "sha256": "sha256:f2df55d3977663eeb1f23850faad491dbc8fcb2d25d930698060cc819001e697"
+    "sha256": "sha256:804afefcf2d97db81b6555f96450de0fd7ae77642fa026d0822a155ca4d98d64"
+  },
+  "collectionLayoutStyles": {
+    "sourcePath": "site/collection-layout.css",
+    "sha256": "sha256:46e6855129632a48e79188c2baf460358d8d59a7dfa1e775f900de2aee570bf8"
   }
 }
