@@ -59,3 +59,13 @@ test('workbook CSS reserves shared control styling and target geometry for the d
     }
   }
 });
+
+test('the offline browser entry includes the pinned native inline editor from its owner', async () => {
+  const [app, owner, bundle, pin] = await Promise.all([
+    read('sheets/app.mjs'), read('design/inline-editor.mjs'), read('sheets/dist/app.mjs'), read('design/shared-ui-profile.pin.json'),
+  ]);
+  const binding = "import { mountInlineEditor } from '../design/inline-editor.mjs';\n";
+  assert.ok(app.startsWith(binding));
+  assert.equal(bundle, owner + '\n' + app.slice(binding.length));
+  assert.equal(JSON.parse(pin).inlineEditor.sourcePath, 'site/inline-editor.js');
+});

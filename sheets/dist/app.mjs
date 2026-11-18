@@ -1,3 +1,47 @@
+// One native single-line draft field. The host owns the value and the commit decision.
+export function mountInlineEditor(host, { value, label, describedBy, onInput, onCommit, onCancel }) {
+  if (!label || typeof onInput !== 'function' || typeof onCommit !== 'function' || typeof onCancel !== 'function') {
+    throw new TypeError('Inline editing requires a label and input, commit and cancel handlers');
+  }
+  if (host.hasAttribute('data-agentic-inline-editing')) throw new Error('This host already has an inline editor');
+  const field = host.ownerDocument.createElement('input');
+  field.type = 'text';
+  field.className = 'agentic-inline-editor';
+  field.value = value;
+  field.autocomplete = 'off';
+  field.autocapitalize = 'off';
+  field.spellcheck = false;
+  field.enterKeyHint = 'done';
+  field.setAttribute('aria-label', label);
+  if (describedBy) field.setAttribute('aria-describedby', describedBy);
+
+  const listeners = new AbortController();
+  const options = { signal: listeners.signal };
+  let composing = false;
+  field.addEventListener('compositionstart', () => { composing = true; }, options);
+  field.addEventListener('compositionend', () => { composing = false; }, options);
+  field.addEventListener('input', () => onInput(field.value), options);
+  field.addEventListener('keydown', event => {
+    if (composing || event.isComposing || event.keyCode === 229 || field.readOnly) return;
+    if (event.key !== 'Enter' && event.key !== 'Escape') return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.key === 'Enter') onCommit();
+    else onCancel();
+  }, options);
+  host.setAttribute('data-agentic-inline-editing', '');
+  host.append(field);
+  return {
+    input: field,
+    destroy() {
+      if (listeners.signal.aborted) return;
+      listeners.abort();
+      field.remove();
+      host.removeAttribute('data-agentic-inline-editing');
+    },
+  };
+}
+
 import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, sampleCells } from './core.mjs';
 import { addressOf, coordinate, parseInput, inputOf } from './schema.mjs';
 import { createSheetsStore } from './storage.mjs';
@@ -5,6 +49,7 @@ const $ = id => document.getElementById(id);
 const store = createSheetsStore({ authorize: () => true }); // Local demo policy; not same-origin authentication.
 let workbook = null, selected = 'A1', dirty = false, busy = true, imported = null, importGeneration = 0;
 const cells = new Map();
+let inlineEditor = null;
 const uuid = () => crypto.randomUUID();
 const error = value => { $('error').hidden = !value; $('error').textContent = value ? `${value.code ?? 'ERROR'}: ${value.message ?? value}` : ''; };
 function state() {
@@ -12,6 +57,7 @@ function state() {
   $('download').disabled = busy || !workbook;
   $('reload').disabled = busy;
   $('editor-fieldset').disabled = busy || !workbook;
+  if (inlineEditor) inlineEditor.input.readOnly = busy;
   $('restore').disabled = busy || !imported || !workbook || imported.workbookId !== workbook.workbookId;
   $('clone').disabled = busy || !imported;
   $('snapshot-file').disabled = busy;
@@ -60,20 +106,29 @@ function showFormulaHints(source, caret) {
   const descriptions = ['syntax', 'draft'];
   if (!referenceList.hidden) descriptions.push(referenceList.id);
   if (!functionHelp.hidden) descriptions.push(functionHelp.id);
-  formulaInput.setAttribute('aria-describedby', descriptions.join(' '));
+  const description = descriptions.join(' ');
+  formulaInput.setAttribute('aria-describedby', description);
+  inlineEditor?.input.setAttribute('aria-describedby', description);
   inspectedDraft = source;
   inspectedCaret = caret;
 }
 function inspectEditor() {
-  if (document.activeElement !== formulaInput || busy || !workbook || !formulaInput.value.startsWith('=')) showFormulaHints(null, null);
-  else showFormulaHints(formulaInput.value, formulaInput.selectionStart);
+  const field = document.activeElement;
+  if ((field === formulaInput || field === inlineEditor?.input) && !busy && workbook && field.value.startsWith('=')) {
+    showFormulaHints(field.value, field.selectionStart);
+  } else showFormulaHints(null, null);
 }
 function markSelected(element, active) {
   element.tabIndex = active ? 0 : -1;
   element.setAttribute('aria-selected', String(active));
   element.classList.toggle('agentic-control-selected', active);
 }
+function closeInlineEditor() {
+  inlineEditor?.destroy();
+  inlineEditor = null;
+}
 function render() {
+  closeInlineEditor();
   const results = workbook ? calculate(workbook) : {};
   for (const [address, element] of cells) {
     const cell = workbook?.cells[address], result = results[address];
@@ -89,16 +144,44 @@ function render() {
   editor(); state();
 }
 function select(address, focus = false) {
-  if (busy) return;
-  if (dirty && address !== selected) { error('Commit or cancel the current draft before changing cells.'); return; }
-  markSelected(cells.get(selected), false);
-  selected = address;
-  markSelected(cells.get(address), true);
-  if (!dirty) editor();
+  if (busy) return false;
+  if (dirty && address !== selected) {
+    error('Commit or cancel the current draft before changing cells.');
+    (inlineEditor?.input ?? formulaInput).focus();
+    return false;
+  }
+  if (address !== selected) {
+    closeInlineEditor();
+    markSelected(cells.get(selected), false);
+    selected = address;
+    markSelected(cells.get(selected), true);
+    editor();
+  }
   if (focus) cells.get(address).focus({ preventScroll: true });
   state();
+  return true;
 }
-function beginEdit() { if (workbook && !busy) { $('cell-input').focus(); $('cell-input').select(); } }
+function beginInlineEdit(replacement) {
+  if (!workbook || busy) return;
+  if (!inlineEditor) {
+    inlineEditor = mountInlineEditor(cells.get(selected), {
+      value: formulaInput.value, label: 'Edit cell ' + selected,
+      describedBy: formulaInput.getAttribute('aria-describedby'),
+      onInput: value => updateDraft(value),
+      onCommit: () => commitDraft(), onCancel: cancel,
+    });
+    inlineEditor.input.addEventListener('focus', inspectEditor);
+    inlineEditor.input.addEventListener('blur', () => showFormulaHints(null, null));
+  }
+  const field = inlineEditor.input;
+  if (replacement !== undefined) {
+    field.value = replacement;
+    updateDraft(replacement);
+  }
+  field.focus();
+  field.setSelectionRange(field.value.length, field.value.length);
+  inspectEditor();
+}
 function buildGrid() {
   const header = document.createElement('tr'), corner = document.createElement('th'); corner.textContent = 'Cell'; header.append(corner);
   for (let column = 0; column < LIMITS.columns; column++) { const th = document.createElement('th'); th.scope = 'col'; th.textContent = String.fromCharCode(65 + column); header.append(th); }
@@ -109,14 +192,22 @@ function buildGrid() {
       const address = addressOf(row, column), td = document.createElement('td'); td.setAttribute('role', 'gridcell');
       td.className = 'agentic-grid-cell';
       td.id = `cell-${address}`;
-      td.addEventListener('click', () => select(address, true)); td.addEventListener('dblclick', beginEdit);
+      td.addEventListener('click', event => {
+        if (event.target !== td) return;
+        if (selected === address && workbook) beginInlineEdit();
+        else select(address, true);
+      });
       td.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === 'F2') { event.preventDefault(); beginEdit(); return; }
+        if (event.target !== td || busy || address !== selected || event.isComposing || event.keyCode === 229) return;
+        if (event.key === 'Enter' || event.key === 'F2') { event.preventDefault(); beginInlineEdit(); return; }
+        if (workbook && event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          event.preventDefault(); beginInlineEdit(event.key); return;
+        }
         const { row: r, column: c } = coordinate(address), offsets = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
         if (event.key in offsets) {
           event.preventDefault(); const [dr, dc] = offsets[event.key];
           const next = addressOf(Math.max(0, Math.min(31, r + dr)), Math.max(0, Math.min(15, c + dc)));
-          select(next, true); cells.get(next).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+          if (select(next, true)) cells.get(next).scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
       });
       cells.set(address, td); tr.append(td);
@@ -131,6 +222,7 @@ async function act(operation, payload) {
     const result = await store.commit({ contract: CONTRACT, operationId: uuid(), operation,
       expectedRevision: workbook?.revision ?? 0, payload });
     workbook = result.workbook; render();
+    return true;
   } catch (failure) { error(failure); }
   finally { busy = false; state(); }
 }
@@ -144,21 +236,34 @@ markWorksheet.addEventListener('click', () => {
 });
 $('sample').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Line-item workbook', cells: sampleCells() }));
 $('blank').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Local workbook' }));
-$('editor-form').addEventListener('submit', event => {
-  event.preventDefault(); if (!workbook || busy) return;
-  try { const cell = parseInput($('cell-input').value); void act('setCells', { workbookId: workbook.workbookId, sheetId: workbook.sheetId, changes: [{ address: selected, cell }] }); }
-  catch (failure) { error(failure); }
-});
-formulaInput.addEventListener('input', () => {
-  dirty = formulaInput.value !== inputOf(workbook?.cells[selected]);
+async function commitDraft() {
+  if (!workbook || busy) return;
+  const editingInCell = Boolean(inlineEditor);
+  if (editingInCell && !dirty) { cancel(); return; }
+  try {
+    const cell = parseInput(formulaInput.value);
+    const saved = await act('setCells', { workbookId: workbook.workbookId, sheetId: workbook.sheetId, changes: [{ address: selected, cell }] });
+    if (editingInCell && saved) cells.get(selected).focus({ preventScroll: true });
+    if (editingInCell && !saved) inlineEditor?.input.focus();
+  } catch (failure) { error(failure); inlineEditor?.input.focus(); }
+}
+$('editor-form').addEventListener('submit', event => { event.preventDefault(); void commitDraft(); });
+function updateDraft(value) {
+  if (formulaInput.value !== value) formulaInput.value = value;
+  if (inlineEditor && inlineEditor.input.value !== value) inlineEditor.input.value = value;
+  dirty = value !== inputOf(workbook?.cells[selected]);
   inspectEditor(); state();
-});
+}
+formulaInput.addEventListener('input', () => updateDraft(formulaInput.value));
 formulaInput.addEventListener('focus', inspectEditor);
 formulaInput.addEventListener('blur', () => showFormulaHints(null, null));
 document.addEventListener('selectionchange', inspectEditor);
-function cancel() { editor(); state(); error(null); cells.get(selected).focus(); }
+function cancel() {
+  if (busy) return;
+  closeInlineEditor(); editor(); state(); error(null); cells.get(selected).focus();
+}
 $('cancel').addEventListener('click', cancel);
-$('cell-input').addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); cancel(); } });
+$('cell-input').addEventListener('keydown', event => { if (event.key === 'Escape' && !event.isComposing && event.keyCode !== 229) { event.preventDefault(); cancel(); } });
 $('reload').addEventListener('click', async () => {
   if (busy) return; busy = true; state();
   try { workbook = await store.load(); error(null); render(); } catch (failure) { error(failure); }
