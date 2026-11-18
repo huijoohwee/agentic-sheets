@@ -31,14 +31,18 @@
         <legend id="editor-title" class="agentic-panel-section-title">Cell editor</legend>
         <label for="cell-input"><output id="address">A1</output> · <span id="cell-kind">Empty cell</span></label>
         <input id="cell-input" class="agentic-form-control" name="cell" aria-label="Cell value or formula" aria-describedby="syntax draft" autocomplete="off" spellcheck="false">
-        <div id="formula-references" class="agentic-reference-list" hidden><span>References</span></div>
-        <div id="function-help" data-dashboard-primitive="text" hidden><code>SUM(start:end)</code> adds one rectangular range. Empty cells count as zero.</div>
+        <details id="available-functions" data-dashboard-primitive="disclosure">
+          <summary>Functions</summary>
+          <dl id="function-list"></dl>
+        </details>
         <section id="cell-actions" class="agentic-dashboard-actions" aria-label="Cell actions">
           <button id="commit" class="agentic-form-control" type="submit">Commit cell</button>
           <button id="cancel" class="agentic-form-control" type="button">Cancel edit</button>
         </section>
+        <div id="formula-references" class="agentic-reference-list" hidden><span>References</span></div>
+        <div id="function-help" data-dashboard-primitive="text" hidden></div>
         <output id="draft" class="agentic-dashboard-observation">Accepted value</output>
-        <p id="syntax" data-dashboard-primitive="text">Numbers, text, TRUE/FALSE, or formulas with + − × ÷ and SUM(A1:B2). Start literal text with an apostrophe. Double-click a cell, tap the selected cell, or press F2 to edit in place. Enter saves. Escape cancels.</p>
+        <p id="syntax" data-dashboard-primitive="text">Numbers, text, TRUE/FALSE, or formulas with + − × ÷ and cell references. Start literal text with an apostrophe. Double-click a cell, tap the selected cell, or press F2 to edit in place. Enter saves. Escape cancels.</p>
       </fieldset>
     </form>
     <section id="grid-section" tabindex="0" aria-label="Scrollable workbook grid">

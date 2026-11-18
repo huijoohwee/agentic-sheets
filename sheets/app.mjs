@@ -1,5 +1,5 @@
 import { mountInlineEditor } from '../design/inline-editor.mjs';
-import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, sampleCells } from './core.mjs';
+import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, listFunctions, sampleCells } from './core.mjs';
 import { addressOf, coordinate, parseInput, inputOf } from './schema.mjs';
 import { createSheetsStore } from './storage.mjs';
 const $ = id => document.getElementById(id);
@@ -32,6 +32,52 @@ function editor() {
 const formulaInput = $('cell-input');
 const referenceList = $('formula-references');
 const functionHelp = $('function-help');
+const functionsPanel = $('available-functions');
+const functionsByName = new Map(listFunctions().map(fn => [fn.name, fn]));
+function code(text) {
+  const element = document.createElement('code');
+  element.textContent = text;
+  return element;
+}
+for (const fn of functionsByName.values()) {
+  const term = document.createElement('dt'), definition = document.createElement('dd');
+  term.append(code(fn.signature));
+  const example = document.createElement('p');
+  const inputs = Object.entries(fn.example.cells).map(([address, value]) => `${address} = ${value}`).join(', ');
+  example.append(`With ${inputs}, `, code(fn.example.formula), ` returns ${fn.example.result}.`);
+  definition.append(fn.summary, ' ', fn.arguments.map(arg => arg.description).join(' '), example);
+  $('function-list').append(term, definition);
+}
+// A disclosure can be reached from either editor. Return to the original selection on dismissal.
+let helpOrigin = null;
+function rememberEditor(field) {
+  if (field !== formulaInput && (!inlineEditor || field !== inlineEditor.input)) return;
+  helpOrigin = { field, address: selected, value: field.value, start: field.selectionStart,
+    end: field.selectionEnd, direction: field.selectionDirection };
+}
+functionsPanel.addEventListener('pointerdown', () => {
+  if (!functionsPanel.open) rememberEditor(document.activeElement);
+});
+functionsPanel.addEventListener('focusin', event => rememberEditor(event.relatedTarget));
+functionsPanel.addEventListener('focusout', event => {
+  if (!functionsPanel.contains(event.relatedTarget)) helpOrigin = null;
+});
+functionsPanel.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && functionsPanel.open) {
+    event.preventDefault();
+    functionsPanel.open = false;
+  }
+});
+functionsPanel.addEventListener('toggle', () => {
+  if (functionsPanel.open) return;
+  const origin = helpOrigin;
+  helpOrigin = null;
+  if (origin && functionsPanel.contains(document.activeElement) && !busy && workbook
+      && origin.field.isConnected && origin.address === selected && origin.value === origin.field.value) {
+    origin.field.focus();
+    origin.field.setSelectionRange(origin.start, origin.end, origin.direction);
+  }
+});
 let inspectedDraft = null, inspectedCaret = null, shownLabels = '';
 const markedReferences = new Set();
 function showFormulaHints(source, caret) {
@@ -59,7 +105,12 @@ function showFormulaHints(source, caret) {
     });
     referenceList.hidden = references.length === 0;
   }
-  functionHelp.hidden = functionName !== 'SUM';
+  const fn = functionsByName.get(functionName);
+  if (fn && functionHelp.dataset.functionId !== fn.id) {
+    functionHelp.replaceChildren(code(fn.signature), ' ', fn.summary);
+    functionHelp.dataset.functionId = fn.id;
+  }
+  functionHelp.hidden = !fn;
   const descriptions = ['syntax', 'draft'];
   if (!referenceList.hidden) descriptions.push(referenceList.id);
   if (!functionHelp.hidden) descriptions.push(functionHelp.id);
