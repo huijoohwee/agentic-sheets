@@ -20,6 +20,13 @@ export async function buildSheetsArtifact() {
   files.set('shared-ui-profile.css', profile);
   const toolbar = await input('design/toolbar.css');
   if (`sha256:${digest(toolbar)}` !== pin.toolbar.sha256) throw new Error('Design System toolbar digest mismatch');
+  const editor = await input('design/inline-editor.mjs');
+  if (`sha256:${digest(editor)}` !== pin.inlineEditor.sha256) throw new Error('Design System inline editor digest mismatch');
+  // Bind the exact owner module into the existing offline app entry.
+  const editorImport = "import { mountInlineEditor } from '../design/inline-editor.mjs';\n";
+  const app = files.get('app.mjs').toString();
+  if (!app.startsWith(editorImport)) throw new Error('Missing inline editor import in Sheets');
+  files.set('app.mjs', Buffer.concat([editor, Buffer.from('\n' + app.slice(editorImport.length))]));
   files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), files.get('styles.css')]));
   files.set('LICENSE', await input('LICENSE'));
   const designLicense = await input('sheets/LICENSE.design-system');
