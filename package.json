@@ -1,0 +1,19 @@
+{
+  "name": "agentic-sheets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "scripts": {
+    "setup": "agentic-os setup",
+    "doctor": "agentic-os doctor",
+    "lane": "agentic-os start",
+    "land": "agentic-os land"
+  },
+  "devDependencies": {
+    "agentic-os": "github:huijoohwee/agentic-os#d3430c8da71b0128b644040bfd1ef32d9f36c50e"
+  }
+}

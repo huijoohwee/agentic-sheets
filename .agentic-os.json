@@ -1,0 +1,38 @@
+{
+  "schema": "agentic-os/repository-profile/v1",
+  "repository": "github.com/huijoohwee/agentic-sheets",
+  "canonical": {
+    "localRef": "refs/heads/main",
+    "remoteRef": "refs/remotes/origin/main"
+  },
+  "adapters": {
+    "repository": {
+      "id": "git",
+      "version": "1"
+    },
+    "provider": {
+      "id": "github",
+      "version": "1"
+    }
+  },
+  "requiredChecks": [
+    "check"
+  ],
+  "capabilities": [
+    "protected-integration:pull-request",
+    "quarantine-worktree-cleanup-opt-in"
+  ],
+  "authority": {
+    "runtime": "consumer",
+    "release": "consumer"
+  },
+  "cleanup": {
+    "localBranch": "retain",
+    "remoteBranch": "retain",
+    "remoteTrackingRef": "retain",
+    "unreachableObjects": "retain",
+    "worktreeProjection": "quarantine",
+    "worktreeRegistration": "quarantine"
+  },
+  "profileDigest": "dc0319c9c87953204def820c34d93291e828b7be71f36e4fe7d6b749b7d24aee"
+}
