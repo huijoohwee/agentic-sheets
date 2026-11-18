@@ -1,0 +1,30 @@
+{
+  "schema": "agentic-design-system/consumer-pin/v1",
+  "profile": {
+    "id": "shared-ui",
+    "owner": "github.com/huijoohwee/agentic-design-system",
+    "sourceRevision": "e52a52111f52b6af85f99195ec9e59a490548575",
+    "registryRevision": "54229ceed5106c5a44a2cb3731c0deb0f74a1904",
+    "sourcePath": "site/tokens/shared-ui-profile.json",
+    "sourceSha256": "sha256:e5915b4b22dc861a80478e7b99dd27ecd41022ed755544812d6b74b2d4ea60dd",
+    "projectionPath": "site/vendor/shared-ui-profile.css",
+    "projectionSha256": "sha256:2d79bcca25b00cd7ad6d2c09f360056f922594800922ef8a71c3925bb98cea9b"
+  },
+  "metrics": {
+    "rowHeight": 38,
+    "rowHeightTouch": 54,
+    "bodyFontSize": 14,
+    "bodyLineHeight": 20,
+    "ktvPanelWidth": 420,
+    "controlHeight": 28,
+    "controlHeightTouch": 48,
+    "dashboardCardGap": 12,
+    "floatingPanelRadius": 8,
+    "panelBottomHeight": 280,
+    "panelGap": 12,
+    "panelMainWidth": 80,
+    "panelMainWidthMobile": 96,
+    "panelMainHeight": 80,
+    "panelMainHeightMobile": 85
+  }
+}

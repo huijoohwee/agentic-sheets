@@ -7,7 +7,17 @@
   "engines": {
     "node": ">=22.22.0"
   },
+  "exports": {
+    ".": "./sheets/core.mjs",
+    "./storage": "./sheets/storage.mjs"
+  },
   "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "dev:sheets": "npm run dev",
+    "build:sheets": "node scripts/build-sheets.mjs --write",
+    "check:sheets": "node --test && node scripts/build-sheets.mjs --check",
+    "check": "npm run check:sheets",
+    "test": "npm run check",
     "setup": "agentic-os setup",
     "doctor": "agentic-os doctor",
     "lane": "agentic-os start",
