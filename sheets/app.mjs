@@ -64,6 +64,7 @@ function buildGrid() {
     const tr = document.createElement('tr'), th = document.createElement('th'); th.scope = 'row'; th.textContent = String(row + 1); tr.append(th);
     for (let column = 0; column < LIMITS.columns; column++) {
       const address = addressOf(row, column), td = document.createElement('td'); td.setAttribute('role', 'gridcell');
+      td.className = 'agentic-grid-cell';
       td.id = `cell-${address}`;
       td.addEventListener('click', () => select(address, true)); td.addEventListener('dblclick', beginEdit);
       td.addEventListener('keydown', event => {
@@ -90,6 +91,14 @@ async function act(operation, payload) {
   } catch (failure) { error(failure); }
   finally { busy = false; state(); }
 }
+const markWorksheet = $('mark-worksheet');
+markWorksheet.addEventListener('click', () => {
+  const grid = $('grid-section');
+  const marked = grid.dataset.agenticAnnotationTarget !== 'true';
+  if (marked) grid.dataset.agenticAnnotationTarget = 'true';
+  else delete grid.dataset.agenticAnnotationTarget;
+  markWorksheet.setAttribute('aria-pressed', String(marked));
+});
 $('sample').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Line-item workbook', cells: sampleCells() }));
 $('blank').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Local workbook' }));
 $('editor-form').addEventListener('submit', event => {
