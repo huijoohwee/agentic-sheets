@@ -1,4 +1,4 @@
-import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, sampleCells } from './core.mjs';
+import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, sampleCells } from './core.mjs';
 import { addressOf, coordinate, parseInput, inputOf } from './schema.mjs';
 import { createSheetsStore } from './storage.mjs';
 const $ = id => document.getElementById(id);
@@ -24,6 +24,49 @@ function editor() {
   $('address').textContent = selected;
   $('cell-kind').textContent = cell ? `${cell.type} cell` : 'Empty cell';
   $('cell-input').value = inputOf(cell); dirty = false;
+  showFormulaHints(null, null);
+}
+const formulaInput = $('cell-input');
+const referenceList = $('formula-references');
+const functionHelp = $('function-help');
+let inspectedDraft = null, inspectedCaret = null, shownLabels = '';
+const markedReferences = new Set();
+function showFormulaHints(source, caret) {
+  if (source === inspectedDraft && caret === inspectedCaret) return;
+  const { references, functionName } = inspectFormulaDraft(source, caret);
+  const labels = references.map(reference => reference.label).join(' ');
+  if (labels !== shownLabels) {
+    shownLabels = labels;
+    for (const address of markedReferences) delete cells.get(address).dataset.agenticReference;
+    markedReferences.clear();
+    // Keep the accessible label and replace only the generated address labels.
+    referenceList.replaceChildren(referenceList.firstElementChild);
+    references.forEach(({ label, addresses }, index) => {
+      const slot = String(1 + index % 3);
+      const item = document.createElement('code');
+      item.className = 'agentic-reference-label';
+      item.dataset.agenticReference = slot;
+      item.textContent = label;
+      referenceList.append(item);
+      for (const address of addresses) {
+        if (markedReferences.has(address)) continue;
+        cells.get(address).dataset.agenticReference = slot;
+        markedReferences.add(address);
+      }
+    });
+    referenceList.hidden = references.length === 0;
+  }
+  functionHelp.hidden = functionName !== 'SUM';
+  const descriptions = ['syntax', 'draft'];
+  if (!referenceList.hidden) descriptions.push(referenceList.id);
+  if (!functionHelp.hidden) descriptions.push(functionHelp.id);
+  formulaInput.setAttribute('aria-describedby', descriptions.join(' '));
+  inspectedDraft = source;
+  inspectedCaret = caret;
+}
+function inspectEditor() {
+  if (document.activeElement !== formulaInput || busy || !workbook || !formulaInput.value.startsWith('=')) showFormulaHints(null, null);
+  else showFormulaHints(formulaInput.value, formulaInput.selectionStart);
 }
 function markSelected(element, active) {
   element.tabIndex = active ? 0 : -1;
@@ -106,7 +149,13 @@ $('editor-form').addEventListener('submit', event => {
   try { const cell = parseInput($('cell-input').value); void act('setCells', { workbookId: workbook.workbookId, sheetId: workbook.sheetId, changes: [{ address: selected, cell }] }); }
   catch (failure) { error(failure); }
 });
-$('cell-input').addEventListener('input', () => { dirty = $('cell-input').value !== inputOf(workbook?.cells[selected]); state(); });
+formulaInput.addEventListener('input', () => {
+  dirty = formulaInput.value !== inputOf(workbook?.cells[selected]);
+  inspectEditor(); state();
+});
+formulaInput.addEventListener('focus', inspectEditor);
+formulaInput.addEventListener('blur', () => showFormulaHints(null, null));
+document.addEventListener('selectionchange', inspectEditor);
 function cancel() { editor(); state(); error(null); cells.get(selected).focus(); }
 $('cancel').addEventListener('click', cancel);
 $('cell-input').addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); cancel(); } });

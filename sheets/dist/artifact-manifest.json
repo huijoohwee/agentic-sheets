@@ -1,25 +1,25 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "1e4b685c6c8ac26011b90efe87eb3da5657a12580cb9d6e269e4f8bcc51c39d2",
+  "sourceDigest": "dea6aeea62da25ab28004e68784ea177dd25697f713cd709680db39a36afa016",
   "designSystem": {
-    "revision": "590dd6ea1e408c761d0902d6ec00bbcc82e833b8",
+    "revision": "f052ec379a5a4e8eaba71418ab4d5e6cb5d92efe",
     "profileSource": "e52a52111f52b6af85f99195ec9e59a490548575",
-    "profileSha256": "ce1634b7473c5b3452aaa7f346dabc0888c876125cb6904bd0a05f184aba3334",
+    "profileSha256": "b4b71286f842ab35c8e93d5ac744278726bd613bec01361dc55f16cc3d990e95",
     "licenseSha256": "b2e476300173b31043c1222c840b5cd3a8c234d50ffc5f44f104fcbf66fc5ffe"
   },
-  "artifactDigest": "3a65be3af107d0e673ea0fe64c6f4e04bba48b2d7d006bcae4c2bb681c1bfd4a",
-  "totalBytes": 68298,
+  "artifactDigest": "0ac66fe37d3b3a1641b598f80b4bfc27b90507f533ab1e446cb30fb3b51bf25d",
+  "totalBytes": 74180,
   "inputs": [
     {
       "path": "design/shared-ui-profile.css",
-      "bytes": 21899,
-      "sha256": "ce1634b7473c5b3452aaa7f346dabc0888c876125cb6904bd0a05f184aba3334"
+      "bytes": 23377,
+      "sha256": "b4b71286f842ab35c8e93d5ac744278726bd613bec01361dc55f16cc3d990e95"
     },
     {
       "path": "design/shared-ui-profile.pin.json",
       "bytes": 1170,
-      "sha256": "9c7a18619ea126c5f2f1534b067b70b11d74746cf6b95559b6098c6a89879569"
+      "sha256": "d530c706db70f5162491341e1dcadb7d2236b635cc588598fa6b1cc2fe20fc0f"
     },
     {
       "path": "design/toolbar.css",
@@ -48,23 +48,23 @@
     },
     {
       "path": "sheets/app.mjs",
-      "bytes": 9976,
-      "sha256": "722dbcbfcada7193ac0ff6d7952c0b5e60fed82e090ec497c28b2fabd768143d"
+      "bytes": 12223,
+      "sha256": "c8ce1bced3db56fc6a76464b48aae1a42b2412a9a3ec858fbeb163dc096fca4f"
     },
     {
       "path": "sheets/core.mjs",
-      "bytes": 6161,
-      "sha256": "4e82765253a5597ccb104c1f75941a5e8542828dc9988397b65b4bb85776b08b"
+      "bytes": 6214,
+      "sha256": "73d29de62724d453a8d857addbeacd6d3abce373e684a3fc879eb4bbc37733da"
     },
     {
       "path": "sheets/formula.mjs",
-      "bytes": 5461,
-      "sha256": "308d23bdfa92e55b2b34467a4b110480675949bcf97c5f9a42226bff371ae508"
+      "bytes": 7300,
+      "sha256": "b10860e04a7bdbd5724629cd85a341f75a10f82a4807130f0ad02594be04d08f"
     },
     {
       "path": "sheets/index.html",
-      "bytes": 4525,
-      "sha256": "f6ecda7fcc6c7b872ca52106ae345b761f33b283427a1815d20ab65314bfcd7b"
+      "bytes": 4790,
+      "sha256": "a843b7e4ac03dfc25a737b19c0e41f7504133ff19eb89a5d8753b5f1e2693ec2"
     },
     {
       "path": "sheets/LICENSE.design-system",
@@ -100,23 +100,23 @@
   "files": [
     {
       "path": "app.mjs",
-      "bytes": 9976,
-      "sha256": "722dbcbfcada7193ac0ff6d7952c0b5e60fed82e090ec497c28b2fabd768143d"
+      "bytes": 12223,
+      "sha256": "c8ce1bced3db56fc6a76464b48aae1a42b2412a9a3ec858fbeb163dc096fca4f"
     },
     {
       "path": "core.mjs",
-      "bytes": 6161,
-      "sha256": "4e82765253a5597ccb104c1f75941a5e8542828dc9988397b65b4bb85776b08b"
+      "bytes": 6214,
+      "sha256": "73d29de62724d453a8d857addbeacd6d3abce373e684a3fc879eb4bbc37733da"
     },
     {
       "path": "formula.mjs",
-      "bytes": 5461,
-      "sha256": "308d23bdfa92e55b2b34467a4b110480675949bcf97c5f9a42226bff371ae508"
+      "bytes": 7300,
+      "sha256": "b10860e04a7bdbd5724629cd85a341f75a10f82a4807130f0ad02594be04d08f"
     },
     {
       "path": "index.html",
-      "bytes": 4525,
-      "sha256": "f6ecda7fcc6c7b872ca52106ae345b761f33b283427a1815d20ab65314bfcd7b"
+      "bytes": 4790,
+      "sha256": "a843b7e4ac03dfc25a737b19c0e41f7504133ff19eb89a5d8753b5f1e2693ec2"
     },
     {
       "path": "LICENSE",
@@ -140,8 +140,8 @@
     },
     {
       "path": "shared-ui-profile.css",
-      "bytes": 21899,
-      "sha256": "ce1634b7473c5b3452aaa7f346dabc0888c876125cb6904bd0a05f184aba3334"
+      "bytes": 23377,
+      "sha256": "b4b71286f842ab35c8e93d5ac744278726bd613bec01361dc55f16cc3d990e95"
     },
     {
       "path": "storage.mjs",
@@ -156,7 +156,7 @@
     {
       "path": "sw.js",
       "bytes": 1286,
-      "sha256": "665fae9267ba75f5ca5d1174dda0fb0fbdb20932bc91386f2fbd2d70dad7316e"
+      "sha256": "20b28501033aeae85f79a5618a3f4e7c3d77f72bdc7b7f5c60fc09cfb64f2967"
     }
   ]
 }

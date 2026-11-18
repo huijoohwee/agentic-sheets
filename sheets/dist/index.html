@@ -31,6 +31,8 @@
         <legend id="editor-title" class="agentic-panel-section-title">Cell editor</legend>
         <label for="cell-input"><output id="address">A1</output> · <span id="cell-kind">Empty cell</span></label>
         <input id="cell-input" class="agentic-form-control" name="cell" aria-label="Cell value or formula" aria-describedby="syntax draft" autocomplete="off" spellcheck="false">
+        <div id="formula-references" class="agentic-reference-list" hidden><span>References</span></div>
+        <div id="function-help" data-dashboard-primitive="text" hidden><code>SUM(start:end)</code> adds one rectangular range. Empty cells count as zero.</div>
         <section id="cell-actions" class="agentic-dashboard-actions" aria-label="Cell actions">
           <button id="commit" class="agentic-form-control" type="submit">Commit cell</button>
           <button id="cancel" class="agentic-form-control" type="button">Cancel edit</button>
