@@ -1,15 +1,15 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "3e0f2d0a85fec1a54b8e5031450fda8c3be1324b3526903e6bf4f17c03b8a613",
+  "sourceDigest": "54dd43e94ab7aa12b844027f93a12159dd6a7d15f3a4004dd4f59d94b160381c",
   "designSystem": {
     "revision": "e08289ef1d16aecf95e3cabd696624b37e0e3844",
     "profileSource": "e52a52111f52b6af85f99195ec9e59a490548575",
     "profileSha256": "c3068c9a0087aa0dda0a7c420f306f1c080a75021253352e9dde13ef9758d051",
     "licenseSha256": "b2e476300173b31043c1222c840b5cd3a8c234d50ffc5f44f104fcbf66fc5ffe"
   },
-  "artifactDigest": "a59f3a39b79becfd7736e9a081327ef8d28917cf7213b8b4a5f79214c031c709",
-  "totalBytes": 79183,
+  "artifactDigest": "808b7a3fd32a96106f5ca9de6939708905a9596a9523d97514c6b31fbccfcdb7",
+  "totalBytes": 82476,
   "inputs": [
     {
       "path": "design/inline-editor.mjs",
@@ -53,23 +53,23 @@
     },
     {
       "path": "sheets/app.mjs",
-      "bytes": 14512,
-      "sha256": "a134011371b7cc51f467691a8416db34399660ac1cc2ec40542a893144e1dd08"
+      "bytes": 16925,
+      "sha256": "6c5cd012b9bacac5b4fa9ffc9c99d6d74e6413acc9af74e5f6ba5bdaa9651f1e"
     },
     {
       "path": "sheets/core.mjs",
-      "bytes": 6214,
-      "sha256": "73d29de62724d453a8d857addbeacd6d3abce373e684a3fc879eb4bbc37733da"
+      "bytes": 6229,
+      "sha256": "fff4c946d9808bd4e556636df96424fc5e17cf189596db217ede14a6a3ecf15f"
     },
     {
       "path": "sheets/formula.mjs",
-      "bytes": 7300,
-      "sha256": "b10860e04a7bdbd5724629cd85a341f75a10f82a4807130f0ad02594be04d08f"
+      "bytes": 8064,
+      "sha256": "6cdae52f25e77424e8700dbba2ed2bb17ca43d1dd842b8c279a0e46e6af30c96"
     },
     {
       "path": "sheets/index.html",
-      "bytes": 4854,
-      "sha256": "5bfbc4dc9695c2afb594f00e15e26ebe39bf2299bff682520a6b5e375989f93c"
+      "bytes": 4955,
+      "sha256": "b053dda750f12fdaadb93565110bd014d177ed38e68631efe53b9d68f20a38e9"
     },
     {
       "path": "sheets/LICENSE.design-system",
@@ -105,23 +105,23 @@
   "files": [
     {
       "path": "app.mjs",
-      "bytes": 16340,
-      "sha256": "f838cdd320e8ae64e69850b98d453a25e7207b3cb0e52d28e84df3f6654496fd"
+      "bytes": 18753,
+      "sha256": "e8e68c33e8c77ac52552ab4e0b7408c40e65ffcc3417f809919959e829c881d7"
     },
     {
       "path": "core.mjs",
-      "bytes": 6214,
-      "sha256": "73d29de62724d453a8d857addbeacd6d3abce373e684a3fc879eb4bbc37733da"
+      "bytes": 6229,
+      "sha256": "fff4c946d9808bd4e556636df96424fc5e17cf189596db217ede14a6a3ecf15f"
     },
     {
       "path": "formula.mjs",
-      "bytes": 7300,
-      "sha256": "b10860e04a7bdbd5724629cd85a341f75a10f82a4807130f0ad02594be04d08f"
+      "bytes": 8064,
+      "sha256": "6cdae52f25e77424e8700dbba2ed2bb17ca43d1dd842b8c279a0e46e6af30c96"
     },
     {
       "path": "index.html",
-      "bytes": 4854,
-      "sha256": "5bfbc4dc9695c2afb594f00e15e26ebe39bf2299bff682520a6b5e375989f93c"
+      "bytes": 4955,
+      "sha256": "b053dda750f12fdaadb93565110bd014d177ed38e68631efe53b9d68f20a38e9"
     },
     {
       "path": "LICENSE",
@@ -161,7 +161,7 @@
     {
       "path": "sw.js",
       "bytes": 1286,
-      "sha256": "2ce72895164ba91c5ba41e552d05dae189dbefbf6f92bd37ad8eb03325b93dc5"
+      "sha256": "07aa0e64b6d3e733c4b42b5dc0df6d3f105a0557ff264de6b2ef9a25051ea373"
     }
   ]
 }

@@ -1,8 +1,19 @@
-import { LIMITS, SheetsError, byteLength, coordinate, addressOf, requireValue } from './schema.mjs';
+import { CONTRACT, LIMITS, SheetsError, byteLength, coordinate, addressOf, requireValue } from './schema.mjs';
 class FormulaError extends Error { constructor(code) { super(code); this.code = code; } }
 const problem = code => { throw new FormulaError(code); };
 const errors = { PARSE: '#PARSE!', REFERENCE: '#REF!', VALUE: '#VALUE!', DIV_ZERO: '#DIV/0!', CYCLE: '#CYCLE!', NUMBER: '#NUM!' };
-const nextToken = /^(?:\d+\.?\d*|\.\d+)(?:E[+-]?\d+)?|^[A-Z]+[0-9]+|^SUM\b|^[+*/():,-]/;
+const sumName = 'SUM';
+const range = Object.freeze({ name: 'start:end', kind: 'range', description: 'One rectangular range, from its upper-left to lower-right cell.' });
+const sum = Object.freeze({
+  id: 'math.sum', name: sumName, binding: CONTRACT, signature: `${sumName}(${range.name})`,
+  arguments: Object.freeze([range]), summary: 'Adds the numbers in the range. Empty cells count as zero.',
+  example: Object.freeze({ cells: Object.freeze({ A1: 2, A2: 3 }), formula: `=${sumName}(A1:A2)`, result: 5 }),
+});
+const installedFunctions = Object.freeze([sum]);
+export function listFunctions() { return installedFunctions; }
+
+// Keep the recognized name in the lexer identical to the installed workbook binding.
+const nextToken = new RegExp(String.raw`^(?:\d+\.?\d*|\.\d+)(?:E[+-]?\d+)?|^[A-Z]+[0-9]+|^${sum.name}\b|^[+*/():,-]`);
 function scan(source, visit, draft = false) {
   const text = source.toUpperCase();
   for (let offset = 1; offset < text.length;) {
@@ -30,7 +41,7 @@ export function inspectFormulaDraft(source, caret = source?.length) {
   let previous = '';
   const recognized = scan(source, (token, end) => {
     if (end <= caret) {
-      if (token === '(') calls.push(previous === 'SUM' ? previous : null);
+      if (token === '(') calls.push(previous === sum.name ? previous : null);
       if (token === ')') calls.pop();
     }
     tokens.push(token);
@@ -53,7 +64,7 @@ export function inspectFormulaDraft(source, caret = source?.length) {
       if (!(failure instanceof SheetsError) || failure.code !== 'REFERENCE') throw failure;
     }
   }
-  return { references: [...references.values()], functionName: calls.includes('SUM') ? 'SUM' : null };
+  return { references: [...references.values()], functionName: calls.includes(sum.name) ? sum.name : null };
 }
 export function compileFormula(source) {
   const tokens = [], dependencies = new Set();
@@ -72,7 +83,7 @@ export function compileFormula(source) {
     requireValue(depth <= LIMITS.depth, 'LIMIT', 'Formula nesting limit exceeded');
     const token = tokens[index++];
     if (token === '(') { const node = expression(depth + 1); take(')'); return node; }
-    if (token === 'SUM') {
+    if (token === sum.name) {
       take('(');
       const start = ref(tokens[index++]); take(':'); const end = ref(tokens[index++]); take(')');
       const addresses = rectangle(start.address, end.address);

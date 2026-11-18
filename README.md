@@ -6,7 +6,7 @@ Agentic Sheets is an offline-first local workbook with a headless ECMAScript mod
 
 Use Node 22.22 or later. The core, browser app, builder and tests use platform APIs. Run `npm test` to check the source and sealed artifact, `npm run build:sheets` to regenerate the static files, and `npm run dev` to open the editor at http://127.0.0.1:4177/agentic-sheets/. The optional pinned development dependency supplies the repository's Git workflow. A first online visit to the local server primes the scoped service worker for offline reload.
 
-With the dev server running and Playwright available, run `node test-browser/formula-editor.mjs` to exercise formula inspection in fresh desktop, touch and forced-colors browser contexts. Set `PLAYWRIGHT_MODULE` to the entry point of an existing Playwright installation if needed.
+With the dev server running and Playwright available, run `node test-browser/formula-editor.mjs` to exercise formula inspection in fresh desktop, touch and forced-colors browser contexts. Run `node test-browser/function-discovery.mjs <candidate-url> [predecessor-url]` to check offline help, keyboard and touch editing, and optionally reopen a saved workbook across both releases. Set `PLAYWRIGHT_MODULE` to an existing Playwright installation if needed. To compare the headless fixtures with an earlier checkout, set `SHEETS_PREDECESSOR_CORE` to its absolute `sheets/core.mjs` path and run `node --test test/functions.test.mjs`.
 
 ## Headless use
 
@@ -35,6 +35,12 @@ console.log(calculate(workbook).B1.value); // 30
 ```
 
 Use `setCells` with the accepted revision for edits. Download an accepted snapshot before replacing a workbook or moving it to another origin. Restore validates the file and advances the live revision. An explicit clone assigns fresh workbook and sheet IDs. Browser storage can be evicted. Source rollback preserves user data.
+
+### Discover installed functions
+
+Import `listFunctions` from `agentic-sheets` and call `listFunctions()` without a workbook. Each immutable entry describes its stable ID, versioned workbook binding, signature, arguments and runnable example. The current binding is `math.sum`. The example totals A1 = 2 and A2 = 3 with `=SUM(A1:A2)` and returns 5.
+
+Open **Functions** beside the formula field to read the same installed definitions offline. Tab from the formula field to Functions and press Enter, or tap Functions from either editor. Close the disclosure or press Escape while it has focus to return to the draft and its text selection.
 
 ## Source and delivery
 
