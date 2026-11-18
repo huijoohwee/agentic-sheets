@@ -19,6 +19,8 @@ test('the editor uses the sealed owner styles and native named targets', async (
     assert.ok(tag.includes('class="' + owner + '"'), tag);
     assert.match(tag, /\bid="[^"]+"/);
   }
+  assert.match(actions, /<button(?=[^>]*id="mark-worksheet")(?=[^>]*aria-controls="grid-section")(?=[^>]*aria-pressed="false")[^>]*>Mark worksheet<\/button>/);
+  assert.doesNotMatch(html, /data-agentic-annotation-target="true"/);
   assert.match(html, /<section id="grid-section"[^>]*aria-label=/);
   assert.match(html, /<section id="snapshots"[^>]*aria-labelledby="snapshot-title"/);
 });
