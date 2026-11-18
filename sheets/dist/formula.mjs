@@ -1,18 +1,67 @@
-import { LIMITS, SheetsError, coordinate, addressOf, requireValue } from './schema.mjs';
+import { LIMITS, SheetsError, byteLength, coordinate, addressOf, requireValue } from './schema.mjs';
 class FormulaError extends Error { constructor(code) { super(code); this.code = code; } }
 const problem = code => { throw new FormulaError(code); };
 const errors = { PARSE: '#PARSE!', REFERENCE: '#REF!', VALUE: '#VALUE!', DIV_ZERO: '#DIV/0!', CYCLE: '#CYCLE!', NUMBER: '#NUM!' };
-export function compileFormula(source) {
-  const text = source.slice(1).toUpperCase(), tokens = [];
-  let offset = 0, index = 0;
-  const dependencies = new Set();
-  while (offset < text.length) {
+const nextToken = /^(?:\d+\.?\d*|\.\d+)(?:E[+-]?\d+)?|^[A-Z]+[0-9]+|^SUM\b|^[+*/():,-]/;
+function scan(source, visit, draft = false) {
+  const text = source.toUpperCase();
+  for (let offset = 1; offset < text.length;) {
     if (/\s/.test(text[offset])) { offset++; continue; }
-    const token = /^(?:\d+\.?\d*|\.\d+)(?:E[+-]?\d+)?|^[A-Z]+[0-9]+|^SUM\b|^[+*/():,-]/.exec(text.slice(offset));
-    if (!token) problem('PARSE');
-    tokens.push(token[0]); offset += token[0].length;
-    requireValue(tokens.length <= LIMITS.tokens, 'LIMIT', 'Formula token limit exceeded');
+    const match = nextToken.exec(text.slice(offset));
+    if (!match) return draft && /^[A-Z]+$/.test(text.slice(offset));
+    offset += match[0].length;
+    visit(match[0], offset);
   }
+  return true;
+}
+function rectangle(start, end) {
+  const a = coordinate(start), b = coordinate(end), addresses = [];
+  for (let row = a.row; row <= b.row; row++) {
+    for (let column = a.column; column <= b.column; column++) addresses.push(addressOf(row, column));
+  }
+  return addresses;
+}
+// Inspect bounded, potentially incomplete editor text without reading or changing a workbook.
+export function inspectFormulaDraft(source, caret = source?.length) {
+  const empty = { references: [], functionName: null };
+  if (typeof source !== 'string' || !source.startsWith('=') || source.length > LIMITS.formulaBytes
+      || byteLength(source) > LIMITS.formulaBytes) return empty;
+  const tokens = [], calls = [];
+  let previous = '';
+  const recognized = scan(source, (token, end) => {
+    if (end <= caret) {
+      if (token === '(') calls.push(previous === 'SUM' ? previous : null);
+      if (token === ')') calls.pop();
+    }
+    tokens.push(token);
+    previous = token;
+  }, true);
+  if (!recognized || tokens.length > LIMITS.tokens) return empty;
+  const references = new Map();
+  for (let i = 0; i < tokens.length; i++) {
+    const start = tokens[i];
+    if (!/^[A-Z]+[0-9]+$/.test(start)) continue;
+    const hasEnd = tokens[i + 1] === ':' && tokens[i + 2] !== undefined;
+    const end = hasEnd ? tokens[i + 2] : start;
+    if (hasEnd) i += 2;
+    const label = hasEnd ? start + ':' + end : start;
+    if (references.has(label)) continue;
+    try {
+      const addresses = rectangle(start, end);
+      if (addresses.length) references.set(label, { label, addresses });
+    } catch (failure) {
+      if (!(failure instanceof SheetsError) || failure.code !== 'REFERENCE') throw failure;
+    }
+  }
+  return { references: [...references.values()], functionName: calls.includes('SUM') ? 'SUM' : null };
+}
+export function compileFormula(source) {
+  const tokens = [], dependencies = new Set();
+  let index = 0;
+  if (!scan(source, token => {
+    tokens.push(token);
+    requireValue(tokens.length <= LIMITS.tokens, 'LIMIT', 'Formula token limit exceeded');
+  })) problem('PARSE');
   const ref = token => {
     try { coordinate(token); } catch { problem('REFERENCE'); }
     dependencies.add(token);
@@ -26,10 +75,9 @@ export function compileFormula(source) {
     if (token === 'SUM') {
       take('(');
       const start = ref(tokens[index++]); take(':'); const end = ref(tokens[index++]); take(')');
-      const a = coordinate(start.address), b = coordinate(end.address), items = [];
-      if (a.row > b.row || a.column > b.column) problem('REFERENCE');
-      for (let row = a.row; row <= b.row; row++) for (let column = a.column; column <= b.column; column++) items.push(ref(addressOf(row, column)));
-      return { kind: 'sum', items };
+      const addresses = rectangle(start.address, end.address);
+      if (!addresses.length) problem('REFERENCE');
+      return { kind: 'sum', items: addresses.map(ref) };
     }
     if (token && /^[A-Z]+[0-9]+$/.test(token)) return ref(token);
     if (token && /^(?:\d|\.)/.test(token)) {

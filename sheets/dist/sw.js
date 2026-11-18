@@ -1,4 +1,4 @@
-const CACHE = 'agentic-sheets-static-1e4b685c6c8ac26011b90efe';
+const CACHE = 'agentic-sheets-static-dea6aeea62da25ab28004e68';
 const ASSETS = ["./index.html","./app.mjs","./styles.css","./core.mjs","./schema.mjs","./formula.mjs","./storage.mjs","./manifest.webmanifest","./shared-ui-profile.css","./LICENSE","./LICENSE.design-system","./artifact-manifest.json"];
 const scope = new URL(self.registration.scope);
 self.addEventListener('install', event => {

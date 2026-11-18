@@ -1,5 +1,6 @@
 import { CONTRACT, LIMITS, SheetsError, requireValue, keys, identifier, coordinate, canonical, validateCell, validateWorkbook, decodeSnapshot } from './schema.mjs';
 import { calculate as calculateCells } from './formula.mjs';
+export { inspectFormulaDraft } from './formula.mjs';
 export { CONTRACT, LIMITS, SheetsError, validateWorkbook, decodeSnapshot };
 export function calculate(input) { return calculateCells(validateWorkbook(input)); }
 export function encodeSnapshot(input) { return canonical(validateWorkbook(input)); }
