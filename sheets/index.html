@@ -31,10 +31,7 @@
         <legend id="editor-title" class="agentic-panel-section-title">Cell editor</legend>
         <label for="cell-input"><output id="address">A1</output> · <span id="cell-kind">Empty cell</span></label>
         <input id="cell-input" class="agentic-form-control" name="cell" aria-label="Cell value or formula" aria-describedby="syntax draft" autocomplete="off" spellcheck="false">
-        <details id="available-functions" data-dashboard-primitive="disclosure">
-          <summary>Functions</summary>
-          <dl id="function-list"></dl>
-        </details>
+        <button id="open-functions" class="agentic-form-control" type="button" aria-haspopup="dialog" aria-controls="workbook-panel" aria-expanded="false">Functions</button>
         <section id="cell-actions" class="agentic-dashboard-actions" aria-label="Cell actions">
           <button id="commit" class="agentic-form-control" type="submit">Commit cell</button>
           <button id="cancel" class="agentic-form-control" type="button">Cancel edit</button>
@@ -66,5 +63,10 @@
       <output id="identity" class="agentic-dashboard-observation"></output>
     </footer>
   </main>
+  <section id="workbook-panel" hidden>
+    <section id="available-functions" data-panel-tab="functions" data-panel-label="Functions" data-panel-icon="Braces">
+      <dl id="function-list"></dl>
+    </section>
+  </section>
 </body>
 </html>

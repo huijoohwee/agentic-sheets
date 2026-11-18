@@ -32,7 +32,7 @@ function editor() {
 const formulaInput = $('cell-input');
 const referenceList = $('formula-references');
 const functionHelp = $('function-help');
-const functionsPanel = $('available-functions');
+const functionsTrigger = $('open-functions');
 const functionsByName = new Map(listFunctions().map(fn => [fn.name, fn]));
 function code(text) {
   const element = document.createElement('code');
@@ -48,36 +48,41 @@ for (const fn of functionsByName.values()) {
   definition.append(fn.summary, ' ', fn.arguments.map(arg => arg.description).join(' '), example);
   $('function-list').append(term, definition);
 }
-// A disclosure can be reached from either editor. Return to the original selection on dismissal.
+// The panel owns tab navigation. Sheets owns the active workbook editor and its draft.
 let helpOrigin = null;
 function rememberEditor(field) {
   if (field !== formulaInput && (!inlineEditor || field !== inlineEditor.input)) return;
   helpOrigin = { field, address: selected, value: field.value, start: field.selectionStart,
     end: field.selectionEnd, direction: field.selectionDirection };
 }
-functionsPanel.addEventListener('pointerdown', () => {
-  if (!functionsPanel.open) rememberEditor(document.activeElement);
+functionsTrigger.addEventListener('pointerdown', () => rememberEditor(document.activeElement));
+functionsTrigger.addEventListener('focus', event => rememberEditor(event.relatedTarget));
+functionsTrigger.addEventListener('blur', () => {
+  if (functionsTrigger.getAttribute('aria-expanded') === 'false') helpOrigin = null;
 });
-functionsPanel.addEventListener('focusin', event => rememberEditor(event.relatedTarget));
-functionsPanel.addEventListener('focusout', event => {
-  if (!functionsPanel.contains(event.relatedTarget)) helpOrigin = null;
-});
-functionsPanel.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && functionsPanel.open) {
-    event.preventDefault();
-    functionsPanel.open = false;
-  }
-});
-functionsPanel.addEventListener('toggle', () => {
-  if (functionsPanel.open) return;
+function returnToDraft() {
   const origin = helpOrigin;
   helpOrigin = null;
-  if (origin && functionsPanel.contains(document.activeElement) && !busy && workbook
-      && origin.field.isConnected && origin.address === selected && origin.value === origin.field.value) {
+  if (origin && !busy && workbook && origin.field.isConnected && origin.address === selected
+      && origin.value === origin.field.value) {
     origin.field.focus();
     origin.field.setSelectionRange(origin.start, origin.end, origin.direction);
+  } else functionsTrigger.focus();
+}
+async function firstOpen() {
+  functionsTrigger.removeEventListener('click', firstOpen);
+  try {
+    const { mountFloatingPanel } = await import('../design/floating-panel.js');
+    const panel = mountFloatingPanel(functionsTrigger, $('workbook-panel'), {
+      label: 'Workbook tools', returnFocus: returnToDraft,
+    });
+    panel.open();
+  } catch (failure) {
+    error(failure);
+    functionsTrigger.addEventListener('click', firstOpen);
   }
-});
+}
+functionsTrigger.addEventListener('click', firstOpen);
 let inspectedDraft = null, inspectedCaret = null, shownLabels = '';
 const markedReferences = new Set();
 function showFormulaHints(source, caret) {

@@ -5,10 +5,10 @@ import { readFile } from 'node:fs/promises';
 const read = path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 
 test('the editor uses the sealed owner styles and native named targets', async () => {
-  const [html, toolbar, sheet, sealed] = await Promise.all([
-    read('sheets/index.html'), read('design/toolbar.css'), read('sheets/styles.css'), read('sheets/dist/styles.css'),
+  const [html, toolbar, panel, sheet, sealed] = await Promise.all([
+    read('sheets/index.html'), read('design/toolbar.css'), read('design/floating-panel.css'), read('sheets/styles.css'), read('sheets/dist/styles.css'),
   ]);
-  assert.equal(sealed, toolbar + '\n' + sheet);
+  assert.equal(sealed, toolbar + '\n' + panel + '\n' + sheet);
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(match => match[1]),
     ['./shared-ui-profile.css', './styles.css']);
   assert.doesNotMatch(html, /<style\b|\sstyle\s*=/i);
@@ -60,12 +60,17 @@ test('workbook CSS reserves shared control styling and target geometry for the d
   }
 });
 
-test('the offline browser entry includes the pinned native inline editor from its owner', async () => {
-  const [app, owner, bundle, pin] = await Promise.all([
-    read('sheets/app.mjs'), read('design/inline-editor.mjs'), read('sheets/dist/app.mjs'), read('design/shared-ui-profile.pin.json'),
+test('the Functions tab and inline editor use their pinned implementations', async () => {
+  const [html, app, editor, panel, bundle, panelBundle, pinText] = await Promise.all([
+    read('sheets/index.html'), read('sheets/app.mjs'), read('design/inline-editor.mjs'),
+    read('design/floating-panel.js'), read('sheets/dist/app.mjs'), read('sheets/dist/floating-panel.mjs'), read('design/shared-ui-profile.pin.json'),
   ]);
-  const binding = "import { mountInlineEditor } from '../design/inline-editor.mjs';\n";
-  assert.ok(app.startsWith(binding));
-  assert.equal(bundle, owner + '\n' + app.slice(binding.length));
-  assert.equal(JSON.parse(pin).inlineEditor.sourcePath, 'site/inline-editor.js');
+  const pin = JSON.parse(pinText);
+  assert.equal(pin.inlineEditor.sourcePath, 'site/inline-editor.js');
+  assert.equal(pin.floatingPanel.sourcePath, 'site/floating-panel.js');
+  assert.ok(bundle.startsWith(editor));
+  assert.ok(panelBundle.includes(panel.slice(panel.indexOf('\n') + 1)));
+  assert.match(app, /mountFloatingPanel\(functionsTrigger/);
+  assert.match(html, /data-panel-tab="functions" data-panel-label="Functions"/);
+  assert.doesNotMatch(html + app, /<details|agentic-base-floating-panel|agentic-floating-panel-tab|role="tablist"/);
 });

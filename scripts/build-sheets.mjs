@@ -18,18 +18,36 @@ export async function buildSheetsArtifact() {
   const profile = await input(profilePath);
   if (`sha256:${digest(profile)}` !== pin.profile.projectionSha256) throw new Error('Design System profile digest mismatch');
   files.set('shared-ui-profile.css', profile);
-  const toolbar = await input('design/toolbar.css');
-  if (`sha256:${digest(toolbar)}` !== pin.toolbar.sha256) throw new Error('Design System toolbar digest mismatch');
-  const editor = await input('design/inline-editor.mjs');
-  if (`sha256:${digest(editor)}` !== pin.inlineEditor.sha256) throw new Error('Design System inline editor digest mismatch');
-  // Bind the exact owner module into the existing offline app entry.
-  const editorImport = "import { mountInlineEditor } from '../design/inline-editor.mjs';\n";
-  const app = files.get('app.mjs').toString();
-  if (!app.startsWith(editorImport)) throw new Error('Missing inline editor import in Sheets');
-  files.set('app.mjs', Buffer.concat([editor, Buffer.from('\n' + app.slice(editorImport.length))]));
-  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), files.get('styles.css')]));
+  async function ownedAsset(key, name) {
+    const bytes = await input('design/' + name);
+    if ('sha256:' + digest(bytes) !== pin[key].sha256) throw new Error('Design System asset digest mismatch: ' + name);
+    return bytes;
+  }
+  // Only link the explicit imports in the pinned modules. The panel entry loads on first use.
+  function afterImports(bytes, prefix) {
+    const source = bytes.toString();
+    if (!source.startsWith(prefix)) throw new Error('Unexpected offline module imports: ' + prefix);
+    return source.slice(prefix.length);
+  }
+  const toolbar = await ownedAsset('toolbar', 'toolbar.css');
+  const editor = await ownedAsset('inlineEditor', 'inline-editor.mjs');
+  const panelCss = await ownedAsset('floatingPanelStyles', 'floating-panel.css');
+  const panel = await ownedAsset('floatingPanel', 'floating-panel.js');
+  const controls = await ownedAsset('panelControls', 'toolbar-icons.js');
+  const icons = await ownedAsset('icons', 'icons.json');
+  const notices = await ownedAsset('notices', 'THIRD-PARTY-NOTICES.txt');
+  const app = afterImports(files.get('app.mjs'), "import { mountInlineEditor } from '../design/inline-editor.mjs';\n");
+  const panelImport = "import('../design/floating-panel.js')";
+  if (!app.includes(panelImport)) throw new Error('Sheets must load the shared FloatingPanel');
+  files.set('app.mjs', Buffer.concat([editor, Buffer.from('\n' + app.replace(panelImport, "import('./floating-panel.mjs')"))]));
+  files.set('floating-panel.mjs', Buffer.from([
+    'const iconLibrary = ' + icons.toString().trimEnd() + ';',
+    afterImports(controls, "import iconLibrary from './icons.json' with { type: 'json' }\n"),
+    afterImports(panel, "import { createDesignIcon, updatePanelControlGroup } from './toolbar-icons.js';\n"),
+  ].join('\n')));
+  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), panelCss, Buffer.from('\n'), files.get('styles.css')]));
   files.set('LICENSE', await input('LICENSE'));
-  const designLicense = await input('sheets/LICENSE.design-system');
+  const designLicense = Buffer.concat([await input('sheets/LICENSE.design-system'), Buffer.from('\n'), notices]);
   files.set('LICENSE.design-system', designLicense);
   const worker = await input('sheets/sw.js');
   inputs.sort((a, b) => a.path.localeCompare(b.path));
