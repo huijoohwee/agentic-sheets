@@ -33,19 +33,32 @@ export async function buildSheetsArtifact() {
   const editor = await ownedAsset('inlineEditor', 'inline-editor.mjs');
   const panelCss = await ownedAsset('floatingPanelStyles', 'floating-panel.css');
   const panel = await ownedAsset('floatingPanel', 'floating-panel.js');
+  const skills = await ownedAsset('skillsCommands', 'skills-commands.js');
+  const skillsCss = await ownedAsset('skillsCommandsStyles', 'skills-commands.css');
+  const workbookPanel = await input('sheets/workbook-panel.mjs');
+  const catalog = JSON.parse(await input('sheets/invocation-catalog.json'));
+  const osSpec = JSON.parse(await readFile(join(root, 'package.json'))).devDependencies['agentic-os'];
+  if (osSpec !== 'github:' + catalog.owner + '#' + catalog.revision) throw new Error('Agentic OS catalog revision drift');
   const controls = await ownedAsset('panelControls', 'toolbar-icons.js');
   const icons = await ownedAsset('icons', 'icons.json');
   const notices = await ownedAsset('notices', 'THIRD-PARTY-NOTICES.txt');
   const app = afterImports(files.get('app.mjs'), "import { mountInlineEditor } from '../design/inline-editor.mjs';\n");
-  const panelImport = "import('../design/floating-panel.js')";
+  const panelImport = "import('./workbook-panel.mjs')";
   if (!app.includes(panelImport)) throw new Error('Sheets must load the shared FloatingPanel');
   files.set('app.mjs', Buffer.concat([editor, Buffer.from('\n' + app.replace(panelImport, "import('./floating-panel.mjs')"))]));
   files.set('floating-panel.mjs', Buffer.from([
-    'const iconLibrary = ' + icons.toString().trimEnd() + ';',
+    'const iconLibrary = ' + JSON.stringify(JSON.parse(icons)) + ';',
     afterImports(controls, "import iconLibrary from './icons.json' with { type: 'json' }\n"),
     afterImports(panel, "import { createDesignIcon, updatePanelControlGroup } from './toolbar-icons.js';\n"),
+    afterImports(skills, "import { createDesignIcon } from './toolbar-icons.js';\n"),
+    'const catalog = ' + JSON.stringify({ entries: catalog.entries }) + ';',
+    afterImports(workbookPanel, [
+      "import { mountFloatingPanel } from '../design/floating-panel.js';",
+      "import { mountSkillsCommandsReference } from '../design/skills-commands.js';",
+      "import catalog from './invocation-catalog.json' with { type: 'json' };", '',
+    ].join('\n')),
   ].join('\n')));
-  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), panelCss, Buffer.from('\n'), files.get('styles.css')]));
+  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), panelCss, Buffer.from('\n'), skillsCss, Buffer.from('\n'), files.get('styles.css')]));
   files.set('LICENSE', await input('LICENSE'));
   const designLicense = Buffer.concat([await input('sheets/LICENSE.design-system'), Buffer.from('\n'), notices]);
   files.set('LICENSE.design-system', designLicense);

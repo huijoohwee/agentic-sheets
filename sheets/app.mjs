@@ -72,11 +72,8 @@ function returnToDraft() {
 async function firstOpen() {
   functionsTrigger.removeEventListener('click', firstOpen);
   try {
-    const { mountFloatingPanel } = await import('../design/floating-panel.js');
-    const panel = mountFloatingPanel(functionsTrigger, $('workbook-panel'), {
-      label: 'Workbook tools', returnFocus: returnToDraft,
-    });
-    panel.open();
+    const { openWorkbookTools } = await import('./workbook-panel.mjs');
+    openWorkbookTools(functionsTrigger, $('workbook-panel'), returnToDraft);
   } catch (failure) {
     error(failure);
     functionsTrigger.addEventListener('click', firstOpen);
