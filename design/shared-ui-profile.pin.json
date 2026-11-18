@@ -4,7 +4,7 @@
     "id": "shared-ui",
     "owner": "github.com/huijoohwee/agentic-design-system",
     "sourceRevision": "e52a52111f52b6af85f99195ec9e59a490548575",
-    "registryRevision": "e08289ef1d16aecf95e3cabd696624b37e0e3844",
+    "registryRevision": "05a5451018d3f3a552451196fb524c15b3000268",
     "sourcePath": "site/tokens/shared-ui-profile.json",
     "sourceSha256": "sha256:e5915b4b22dc861a80478e7b99dd27ecd41022ed755544812d6b74b2d4ea60dd",
     "projectionPath": "site/vendor/shared-ui-profile.css",
@@ -34,5 +34,25 @@
   "inlineEditor": {
     "sourcePath": "site/inline-editor.js",
     "sha256": "sha256:a9ccad9e2538324367b41aaf4e30d46a60c55482a5e4e43434c4226814685739"
+  },
+  "floatingPanel": {
+    "sourcePath": "site/floating-panel.js",
+    "sha256": "sha256:7e6dd7da6a33f529de5c822b3551a9c036b2e10a1c8c3e85d73fc8c18c438973"
+  },
+  "floatingPanelStyles": {
+    "sourcePath": "site/floating-panel.css",
+    "sha256": "sha256:15395dd5e9d54026edaa0d9199713831cf8e7f27df938eaec9b45a05592710cc"
+  },
+  "panelControls": {
+    "sourcePath": "site/toolbar-icons.js",
+    "sha256": "sha256:f304f25cdef7e054bdd9c62ca7e9f79959363c4e210c9cede0640609183a4471"
+  },
+  "icons": {
+    "sourcePath": "site/icons.json",
+    "sha256": "sha256:8ae9c970e70e9947496bde996af86ce2ca9291fcd6f1cfafae6e417071f33468"
+  },
+  "notices": {
+    "sourcePath": "site/THIRD-PARTY-NOTICES.txt",
+    "sha256": "sha256:958f1ada45cbc5a245d8fb45fb955e39923e0b921658c8ac682e6f38e11e0954"
   }
 }

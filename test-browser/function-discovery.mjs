@@ -53,21 +53,38 @@ async function discoverOffline() {
   await page.locator('#blank').tap();
   await page.waitForFunction(() => document.querySelector('#status').textContent.includes('revision 1 saved'));
   const taskStart = performance.now();
-  const field = page.locator('#cell-input'), panel = page.locator('#available-functions'), summary = panel.locator('summary');
+  const field = page.locator('#cell-input'), trigger = page.getByRole('button', { name: 'Functions', exact: true });
+  const dialog = page.getByRole('dialog', { name: 'Workbook tools' });
+  const tab = dialog.getByRole('tab', { name: 'Functions', selected: true });
+  const panel = dialog.getByRole('tabpanel', { name: 'Functions' });
   const unchanged = await acceptedBytes(page);
   const [entry] = await page.evaluate(async () => (await import('./core.mjs')).listFunctions());
   await field.fill('=su');
   await field.evaluate(e => e.setSelectionRange(1, 3, 'backward'));
   await field.press('Tab');
-  assert.ok(await summary.evaluate(e => e === document.activeElement));
-  await summary.press('Enter');
+  assert.ok(await trigger.evaluate(e => e === document.activeElement));
+  await trigger.press('Enter');
+  await dialog.waitFor({ state: 'visible' });
+  assert.equal(await dialog.count(), 1);
+  assert.equal(await dialog.getByRole('tab').count(), 1);
+  assert.ok(await tab.evaluate(e => e === document.activeElement));
+  await tab.press('ArrowRight');
+  assert.ok(await tab.evaluate(e => e === document.activeElement));
+  assert.equal(await tab.getAttribute('aria-controls'), await panel.getAttribute('id'));
+  assert.equal(await panel.getAttribute('aria-labelledby'), await tab.getAttribute('id'));
+  assert.ok(await dialog.evaluate(e => {
+    const rect = e.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0 && rect.left >= 0 && rect.right <= innerWidth
+      && rect.top >= 0 && rect.bottom <= innerHeight;
+  }));
   await panel.locator('dt').waitFor({ state: 'visible' });
   assert.deepEqual(await panel.locator('dt').allTextContents(), [entry.signature]);
   const accessible = await panel.ariaSnapshot();
   for (const value of [entry.signature, entry.arguments[0].description, entry.example.formula, 'returns 5']) {
     assert.ok(accessible.includes(value), accessible);
   }
-  await summary.press('Escape');
+  await tab.press('Escape');
+  assert.equal(await dialog.count(), 0);
   await page.waitForFunction(() => document.activeElement === document.querySelector('#cell-input'));
   assert.deepEqual(await field.evaluate(e => [e.value, e.selectionStart, e.selectionEnd, e.selectionDirection]), ['=su', 1, 3, 'backward']);
   await field.press('Escape');
@@ -84,9 +101,10 @@ async function discoverOffline() {
   const inline = cell.getByRole('textbox');
   await inline.fill('=SUM(A1:');
   await inline.evaluate(e => e.setSelectionRange(5, 7));
-  await summary.tap();
+  await trigger.tap();
   await panel.locator('dd').waitFor({ state: 'visible' });
-  await summary.tap();
+  await dialog.getByRole('button', { name: 'Close', exact: true }).tap();
+  assert.equal(await dialog.count(), 0);
   await page.waitForFunction(() => document.activeElement === document.querySelector('#cell-B1 input'));
   assert.deepEqual(await inline.evaluate(e => [e.value, e.selectionStart, e.selectionEnd]), ['=SUM(A1:', 5, 7]);
   await inline.press('Escape');
@@ -111,11 +129,11 @@ async function rehearseRollback() {
   await page.locator('#blank').click();
   await enterValues(page, false);
   const accepted = await acceptedBytes(page);
-  for (const [url, hasListing] of [[candidate, true], [predecessor, false]]) {
+  for (const [url, hasPanel] of [[candidate, true], [predecessor, false]]) {
     serving = url;
     await page.reload();
     await page.waitForFunction(() => document.querySelector('#cell-B1').textContent === '5');
-    assert.equal(await page.evaluate(async () => typeof (await import('./core.mjs')).listFunctions === 'function'), hasListing);
+    assert.equal(await page.locator('#open-functions').count() === 1, hasPanel);
     assert.match(await page.locator('#status').textContent(), /revision 4 saved/);
     assert.equal(await acceptedBytes(page), accepted);
   }
