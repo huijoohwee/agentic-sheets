@@ -36,6 +36,8 @@ Use `setCells` with the accepted revision for edits. Download an accepted snapsh
 
 ## Source and delivery
 
-The Sheets v1 engine, browser adapter and compatibility tests originate at `huijoohwee/agentic-base@5b28d4b46505de115dcef1eaa60937a0db4eb5f4` under the retained MIT license. The static UI profile is the central Design System projection at the immutable revision and SHA-256 in `design/shared-ui-profile.pin.json`. Retain its included notice when distributing the artifact.
+The Sheets v1 engine, browser adapter and compatibility tests originate at `huijoohwee/agentic-base@5b28d4b46505de115dcef1eaa60937a0db4eb5f4` under the retained MIT license. The dashboard, headings, forms, selection state and toolbar use the upstream styles at the immutable Design System revision in `design/shared-ui-profile.pin.json`. The builder verifies both CSS projections and packages them for offline use. Retain the included MIT notice.
+
+Use named native regions, buttons, inputs and grid cells as interaction and annotation targets. A worksheet address has a stable DOM ID such as `cell-B2` across edits and recalculation. The owner styles set control height, focus and touch geometry. Workbook CSS owns table geometry and spacing around the controls. Run `npm test` to check these boundaries. The loopback editor allows an annotation tool’s shadow-root stylesheet. The production route uses the site controller’s enforced policy.
 
 The build seals `sheets/dist/` and its input and output digest inventory. The site release owner in `huijoohwee/agentic-graph` verifies exact Git blobs, owns the intended `airvio.co/agentic-sheets/` route and publishes the generated mirror only after its authorized release checks. A local build or source merge provides no production receipt. Cash-flow functions are an optional example in the product specification.

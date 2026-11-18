@@ -25,6 +25,11 @@ function editor() {
   $('cell-kind').textContent = cell ? `${cell.type} cell` : 'Empty cell';
   $('cell-input').value = inputOf(cell); dirty = false;
 }
+function markSelected(element, active) {
+  element.tabIndex = active ? 0 : -1;
+  element.setAttribute('aria-selected', String(active));
+  element.classList.toggle('agentic-control-selected', active);
+}
 function render() {
   const results = workbook ? calculate(workbook) : {};
   for (const [address, element] of cells) {
@@ -35,8 +40,7 @@ function render() {
     element.dataset.kind = cell?.type ?? 'empty';
     if (result?.error) element.dataset.error = result.error; else delete element.dataset.error;
     element.setAttribute('aria-label', `${address}, ${text || 'empty'}${cell?.type === 'formula' ? `, formula ${cell.value}` : ''}`);
-    element.setAttribute('aria-selected', String(selected === address));
-    element.tabIndex = selected === address ? 0 : -1;
+    markSelected(element, selected === address);
   }
   $('identity').textContent = workbook ? `Workbook ${workbook.workbookId} · worksheet ${workbook.sheetId}` : '';
   editor(); state();
@@ -44,9 +48,9 @@ function render() {
 function select(address, focus = false) {
   if (busy) return;
   if (dirty && address !== selected) { error('Commit or cancel the current draft before changing cells.'); return; }
-  cells.get(selected).tabIndex = -1; cells.get(selected).setAttribute('aria-selected', 'false');
+  markSelected(cells.get(selected), false);
   selected = address;
-  cells.get(address).tabIndex = 0; cells.get(address).setAttribute('aria-selected', 'true');
+  markSelected(cells.get(address), true);
   if (!dirty) editor();
   if (focus) cells.get(address).focus({ preventScroll: true });
   state();
@@ -60,6 +64,7 @@ function buildGrid() {
     const tr = document.createElement('tr'), th = document.createElement('th'); th.scope = 'row'; th.textContent = String(row + 1); tr.append(th);
     for (let column = 0; column < LIMITS.columns; column++) {
       const address = addressOf(row, column), td = document.createElement('td'); td.setAttribute('role', 'gridcell');
+      td.id = `cell-${address}`;
       td.addEventListener('click', () => select(address, true)); td.addEventListener('dblclick', beginEdit);
       td.addEventListener('keydown', event => {
         if (event.key === 'Enter' || event.key === 'F2') { event.preventDefault(); beginEdit(); return; }

@@ -18,6 +18,9 @@ export async function buildSheetsArtifact() {
   const profile = await input(profilePath);
   if (`sha256:${digest(profile)}` !== pin.profile.projectionSha256) throw new Error('Design System profile digest mismatch');
   files.set('shared-ui-profile.css', profile);
+  const toolbar = await input('design/toolbar.css');
+  if (`sha256:${digest(toolbar)}` !== pin.toolbar.sha256) throw new Error('Design System toolbar digest mismatch');
+  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), files.get('styles.css')]));
   files.set('LICENSE', await input('LICENSE'));
   const designLicense = await input('sheets/LICENSE.design-system');
   files.set('LICENSE.design-system', designLicense);

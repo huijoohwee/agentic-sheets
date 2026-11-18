@@ -28,7 +28,11 @@ const server = createServer(async (req, res) => {
     const body = await readFile(file);
     const headers = { 'cache-control':'no-store', 'x-content-type-options':'nosniff', 'content-length':body.length,
       'content-type':(mime[extname(file.pathname)] ?? 'text/plain') + '; charset=utf-8' };
-    if (file.pathname.endsWith('/index.html')) headers['content-security-policy'] = csp;
+    if (file.pathname.endsWith('/index.html')) {
+      // Loopback annotation tools insert a <style> element in their own shadow root.
+      headers['content-security-policy-report-only'] = csp;
+      headers['content-security-policy'] = csp + "; style-src-elem 'self' 'unsafe-inline'";
+    }
     if (pathname === prefix + 'sw.js') headers['service-worker-allowed'] = prefix;
     res.writeHead(200, headers).end(req.method === 'HEAD' ? undefined : body);
   } catch (error) {
