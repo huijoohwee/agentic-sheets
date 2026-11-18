@@ -4,7 +4,7 @@
     "id": "shared-ui",
     "owner": "github.com/huijoohwee/agentic-design-system",
     "sourceRevision": "e52a52111f52b6af85f99195ec9e59a490548575",
-    "registryRevision": "05a5451018d3f3a552451196fb524c15b3000268",
+    "registryRevision": "44e35fa46a5184a0fddab862c208e9479cd6812b",
     "sourcePath": "site/tokens/shared-ui-profile.json",
     "sourceSha256": "sha256:e5915b4b22dc861a80478e7b99dd27ecd41022ed755544812d6b74b2d4ea60dd",
     "projectionPath": "site/vendor/shared-ui-profile.css",
@@ -37,7 +37,7 @@
   },
   "floatingPanel": {
     "sourcePath": "site/floating-panel.js",
-    "sha256": "sha256:7e6dd7da6a33f529de5c822b3551a9c036b2e10a1c8c3e85d73fc8c18c438973"
+    "sha256": "sha256:ff36f461589700ed655a98a0d4c73e3677dac8ccf0383e2b15ff0659c129eee5"
   },
   "floatingPanelStyles": {
     "sourcePath": "site/floating-panel.css",
@@ -54,5 +54,13 @@
   "notices": {
     "sourcePath": "site/THIRD-PARTY-NOTICES.txt",
     "sha256": "sha256:958f1ada45cbc5a245d8fb45fb955e39923e0b921658c8ac682e6f38e11e0954"
+  },
+  "skillsCommands": {
+    "sourcePath": "site/skills-commands.js",
+    "sha256": "sha256:4414bbde69076eca72d41d42380688b61d67a53a7e58c55ebbf46f271c8b40ad"
+  },
+  "skillsCommandsStyles": {
+    "sourcePath": "site/skills-commands.css",
+    "sha256": "sha256:f2df55d3977663eeb1f23850faad491dbc8fcb2d25d930698060cc819001e697"
   }
 }

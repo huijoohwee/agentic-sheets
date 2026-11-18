@@ -66,9 +66,27 @@ async function discoverOffline() {
   await trigger.press('Enter');
   await dialog.waitFor({ state: 'visible' });
   assert.equal(await dialog.count(), 1);
-  assert.equal(await dialog.getByRole('tab').count(), 1);
+  assert.equal(await dialog.getByRole('tab').count(), 2);
   assert.ok(await tab.evaluate(e => e === document.activeElement));
   await tab.press('ArrowRight');
+  const skills = dialog.getByRole('tabpanel', { name: 'Skills & Commands' });
+  const skillsTab = dialog.getByRole('tab', { name: 'Skills & Commands', selected: true });
+  await skills.waitFor();
+  assert.ok(await skillsTab.evaluate(e => e === document.activeElement));
+  await skills.getByRole('button', { name: 'At bindings' }).tap();
+  assert.ok((await skills.locator('.agentic-skills-row strong').allTextContents()).every(token => token.startsWith('@')));
+  await skills.getByRole('button', { name: 'Group by Object' }).tap();
+  await skills.getByRole('button', { name: 'Collapse All' }).tap();
+  assert.equal(await skills.locator('details[open]').count(), 0);
+  await skills.getByRole('button', { name: 'Expand All' }).tap();
+  await skills.getByRole('button', { name: 'Search skills and commands' }).tap();
+  const search = skills.getByRole('searchbox', { name: 'Search commands' });
+  await search.fill('@device');
+  assert.deepEqual(await skills.locator('.agentic-skills-row strong').allTextContents(), ['@device:']);
+  await search.fill('unmatched entry');
+  await skills.getByText('No matching entries.').waitFor();
+  await search.press('Escape');
+  await skillsTab.press('Home');
   assert.ok(await tab.evaluate(e => e === document.activeElement));
   assert.equal(await tab.getAttribute('aria-controls'), await panel.getAttribute('id'));
   assert.equal(await panel.getAttribute('aria-labelledby'), await tab.getAttribute('id'));
@@ -129,11 +147,11 @@ async function rehearseRollback() {
   await page.locator('#blank').click();
   await enterValues(page, false);
   const accepted = await acceptedBytes(page);
-  for (const [url, hasPanel] of [[candidate, true], [predecessor, false]]) {
+  for (const [url, hasCatalog] of [[candidate, true], [predecessor, false]]) {
     serving = url;
     await page.reload();
     await page.waitForFunction(() => document.querySelector('#cell-B1').textContent === '5');
-    assert.equal(await page.locator('#open-functions').count() === 1, hasPanel);
+    assert.equal(await page.locator('#invocation-catalog').count() === 1, hasCatalog);
     assert.match(await page.locator('#status').textContent(), /revision 4 saved/);
     assert.equal(await acceptedBytes(page), accepted);
   }

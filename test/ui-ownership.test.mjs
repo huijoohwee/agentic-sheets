@@ -8,7 +8,7 @@ test('the editor uses the sealed owner styles and native named targets', async (
   const [html, toolbar, panel, sheet, sealed] = await Promise.all([
     read('sheets/index.html'), read('design/toolbar.css'), read('design/floating-panel.css'), read('sheets/styles.css'), read('sheets/dist/styles.css'),
   ]);
-  assert.equal(sealed, toolbar + '\n' + panel + '\n' + sheet);
+  assert.equal(sealed, toolbar + '\n' + panel + '\n' + await read('design/skills-commands.css') + '\n' + sheet);
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(match => match[1]),
     ['./shared-ui-profile.css', './styles.css']);
   assert.doesNotMatch(html, /<style\b|\sstyle\s*=/i);
@@ -70,7 +70,11 @@ test('the Functions tab and inline editor use their pinned implementations', asy
   assert.equal(pin.floatingPanel.sourcePath, 'site/floating-panel.js');
   assert.ok(bundle.startsWith(editor));
   assert.ok(panelBundle.includes(panel.slice(panel.indexOf('\n') + 1)));
-  assert.match(app, /mountFloatingPanel\(functionsTrigger/);
+  const binding = await read('sheets/workbook-panel.mjs');
+  const skills = await read('design/skills-commands.js');
+  assert.ok(panelBundle.includes(skills.slice(skills.indexOf('\n') + 1)));
+  assert.match(binding, /mountFloatingPanel\(trigger/);
+  assert.match(binding, /mountSkillsCommandsReference\(/);
   assert.match(html, /data-panel-tab="functions" data-panel-label="Functions"/);
   assert.doesNotMatch(html + app, /<details|agentic-base-floating-panel|agentic-floating-panel-tab|role="tablist"/);
 });
