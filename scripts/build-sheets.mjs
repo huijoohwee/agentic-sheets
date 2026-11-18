@@ -35,6 +35,7 @@ export async function buildSheetsArtifact() {
   const panel = await ownedAsset('floatingPanel', 'floating-panel.js');
   const skills = await ownedAsset('skillsCommands', 'skills-commands.js');
   const skillsCss = await ownedAsset('skillsCommandsStyles', 'skills-commands.css');
+  const collections = await ownedAsset('collectionLayoutStyles', 'collection-layout.css');
   const workbookPanel = await input('sheets/workbook-panel.mjs');
   const catalog = JSON.parse(await input('sheets/invocation-catalog.json'));
   const osSpec = JSON.parse(await readFile(join(root, 'package.json'))).devDependencies['agentic-os'];
@@ -58,7 +59,7 @@ export async function buildSheetsArtifact() {
       "import catalog from './invocation-catalog.json' with { type: 'json' };", '',
     ].join('\n')),
   ].join('\n')));
-  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), panelCss, Buffer.from('\n'), skillsCss, Buffer.from('\n'), files.get('styles.css')]));
+  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), panelCss, Buffer.from('\n'), collections, Buffer.from('\n'), skillsCss, Buffer.from('\n'), files.get('styles.css')]));
   files.set('LICENSE', await input('LICENSE'));
   const designLicense = Buffer.concat([await input('sheets/LICENSE.design-system'), Buffer.from('\n'), notices]);
   files.set('LICENSE.design-system', designLicense);

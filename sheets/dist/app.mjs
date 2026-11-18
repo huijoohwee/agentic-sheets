@@ -83,13 +83,19 @@ function code(text) {
   return element;
 }
 for (const fn of functionsByName.values()) {
-  const term = document.createElement('dt'), definition = document.createElement('dd');
+  const item = document.createElement('li');
+  item.className = 'agentic-collection-item';
+  item.dataset.layout = 'list';
+  const term = document.createElement('span');
+  term.className = 'agentic-collection-term';
+  const definition = document.createElement('div');
   term.append(code(fn.signature));
   const example = document.createElement('p');
   const inputs = Object.entries(fn.example.cells).map(([address, value]) => `${address} = ${value}`).join(', ');
   example.append(`With ${inputs}, `, code(fn.example.formula), ` returns ${fn.example.result}.`);
   definition.append(fn.summary, ' ', fn.arguments.map(arg => arg.description).join(' '), example);
-  $('function-list').append(term, definition);
+  item.append(term, definition);
+  $('function-list').append(item);
 }
 // The panel owns tab navigation. Sheets owns the active workbook editor and its draft.
 let helpOrigin = null;
