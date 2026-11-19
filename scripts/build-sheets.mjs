@@ -29,13 +29,29 @@ export async function buildSheetsArtifact() {
     if (!source.startsWith(prefix)) throw new Error('Unexpected offline module imports: ' + prefix);
     return source.slice(prefix.length);
   }
-  const toolbar = await ownedAsset('toolbar', 'toolbar.css');
+  // Expand the owner's stylesheet entry in its declared order for the offline artifact.
+  // The first import is already loaded by the workbook HTML.
+  const panelEntry = (await ownedAsset('panelStyles', 'panels.css')).toString();
+  const cssSources = new Map(Object.entries(pin).filter(([key, asset]) =>
+    key !== 'profile' && asset.sourcePath?.endsWith('.css')).map(([key, asset]) => [asset.sourcePath, key]));
+  const imports = panelEntry.replace(/\/\*[\s\S]*?\*\//g, '').trim().split(/\n+/).map(line => {
+    const match = /^@import "\.\/([\w/-]+\.css)";$/.exec(line.trim());
+    if (!match) throw new Error('Unexpected Design System CSS entry: ' + line);
+    return 'site/' + match[1];
+  });
+  if (imports.shift() !== pin.profile.projectionPath || new Set(imports).size !== imports.length)
+    throw new Error('Invalid Design System panel stylesheet order');
+  const panelStyles = [];
+  for (const path of imports) {
+    const key = cssSources.get(path);
+    if (!key) throw new Error('Unpinned Design System stylesheet: ' + path);
+    panelStyles.push(await ownedAsset(key, path.slice(5)), Buffer.from('\n'));
+  }
   const editor = await ownedAsset('inlineEditor', 'inline-editor.mjs');
-  const panelCss = await ownedAsset('floatingPanelStyles', 'floating-panel.css');
   const panel = await ownedAsset('floatingPanel', 'floating-panel.js');
+  const sections = await ownedAsset('panelSection', 'panel-section.js');
+  const picker = await ownedAsset('collectionLayout', 'collection-layout.js');
   const skills = await ownedAsset('skillsCommands', 'skills-commands.js');
-  const skillsCss = await ownedAsset('skillsCommandsStyles', 'skills-commands.css');
-  const collections = await ownedAsset('collectionLayoutStyles', 'collection-layout.css');
   const workbookPanel = await input('sheets/workbook-panel.mjs');
   const catalog = JSON.parse(await input('sheets/invocation-catalog.json'));
   const osSpec = JSON.parse(await readFile(join(root, 'package.json'))).devDependencies['agentic-os'];
@@ -51,7 +67,11 @@ export async function buildSheetsArtifact() {
     'const iconLibrary = ' + JSON.stringify(JSON.parse(icons)) + ';',
     afterImports(controls, "import iconLibrary from './icons.json' with { type: 'json' }\n"),
     afterImports(panel, "import { createDesignIcon, updatePanelControlGroup } from './toolbar-icons.js';\n"),
-    afterImports(skills, "import { createDesignIcon } from './toolbar-icons.js';\n"),
+    afterImports(sections, "import { createDesignIcon } from './toolbar-icons.js'\n"),
+    afterImports(picker, "import { createDesignIcon } from './toolbar-icons.js';\n"),
+    afterImports(skills, ["import { createDesignIcon } from './toolbar-icons.js';",
+      "import { PANEL_SECTION, createPanelSectionSummary, setPanelSectionExpanded } from './panel-section.js';",
+      "import { mountCollectionLayoutPicker } from './collection-layout.js';", ''].join('\n')),
     'const catalog = ' + JSON.stringify({ entries: catalog.entries }) + ';',
     afterImports(workbookPanel, [
       "import { mountFloatingPanel } from '../design/floating-panel.js';",
@@ -59,7 +79,7 @@ export async function buildSheetsArtifact() {
       "import catalog from './invocation-catalog.json' with { type: 'json' };", '',
     ].join('\n')),
   ].join('\n')));
-  files.set('styles.css', Buffer.concat([toolbar, Buffer.from('\n'), panelCss, Buffer.from('\n'), collections, Buffer.from('\n'), skillsCss, Buffer.from('\n'), files.get('styles.css')]));
+  files.set('styles.css', Buffer.concat([...panelStyles, files.get('styles.css')]));
   files.set('LICENSE', await input('LICENSE'));
   const designLicense = Buffer.concat([await input('sheets/LICENSE.design-system'), Buffer.from('\n'), notices]);
   files.set('LICENSE.design-system', designLicense);

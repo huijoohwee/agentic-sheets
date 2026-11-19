@@ -74,7 +74,13 @@ async function discoverOffline() {
   await skills.waitFor();
   assert.ok(await skillsTab.evaluate(e => e === document.activeElement));
   await skills.getByRole('button', { name: 'At bindings' }).tap();
-  assert.ok((await skills.locator('.agentic-skills-row strong').allTextContents()).every(token => token.startsWith('@')));
+  for (const layout of ['card', 'grid', 'list']) {
+    await skills.getByRole('button', { name: `${layout[0].toUpperCase()}${layout.slice(1)} layout` }).tap();
+    const rows = skills.locator('.agentic-skills-row');
+    assert.ok(await rows.count() > 0);
+    assert.ok(await rows.evaluateAll((items, expected) => items.every(row => row.dataset.layout === expected), layout));
+  }
+  assert.ok((await skills.locator('.agentic-skills-row .agentic-collection-title').allTextContents()).every(token => token.startsWith('@')));
   await skills.getByRole('button', { name: 'Group by Object' }).tap();
   await skills.getByRole('button', { name: 'Collapse All' }).tap();
   assert.equal(await skills.locator('details[open]').count(), 0);
@@ -82,7 +88,7 @@ async function discoverOffline() {
   await skills.getByRole('button', { name: 'Search skills and commands' }).tap();
   const search = skills.getByRole('searchbox', { name: 'Search commands' });
   await search.fill('@device');
-  assert.deepEqual(await skills.locator('.agentic-skills-row strong').allTextContents(), ['@device:']);
+  assert.deepEqual(await skills.locator('.agentic-skills-row .agentic-collection-title').allTextContents(), ['@device:']);
   await search.fill('unmatched entry');
   await skills.getByText('No matching entries.').waitFor();
   await search.press('Escape');
@@ -95,8 +101,8 @@ async function discoverOffline() {
     return rect.width > 0 && rect.height > 0 && rect.left >= 0 && rect.right <= innerWidth
       && rect.top >= 0 && rect.bottom <= innerHeight;
   }));
-  await panel.locator('dt').waitFor({ state: 'visible' });
-  assert.deepEqual(await panel.locator('dt').allTextContents(), [entry.signature]);
+  await panel.locator('.agentic-collection-term').waitFor({ state: 'visible' });
+  assert.deepEqual(await panel.locator('.agentic-collection-term').allTextContents(), [entry.signature]);
   const accessible = await panel.ariaSnapshot();
   for (const value of [entry.signature, entry.arguments[0].description, entry.example.formula, 'returns 5']) {
     assert.ok(accessible.includes(value), accessible);
@@ -120,7 +126,7 @@ async function discoverOffline() {
   await inline.fill('=SUM(A1:');
   await inline.evaluate(e => e.setSelectionRange(5, 7));
   await trigger.tap();
-  await panel.locator('dd').waitFor({ state: 'visible' });
+  await panel.getByText(entry.summary, { exact: false }).waitFor({ state: 'visible' });
   await dialog.getByRole('button', { name: 'Close', exact: true }).tap();
   assert.equal(await dialog.count(), 0);
   await page.waitForFunction(() => document.activeElement === document.querySelector('#cell-B1 input'));

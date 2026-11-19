@@ -8,7 +8,7 @@ test('the editor uses the sealed owner styles and native named targets', async (
   const [html, toolbar, panel, sheet, sealed] = await Promise.all([
     read('sheets/index.html'), read('design/toolbar.css'), read('design/floating-panel.css'), read('sheets/styles.css'), read('sheets/dist/styles.css'),
   ]);
-  assert.equal(sealed, [toolbar, panel, await read('design/collection-layout.css'), await read('design/skills-commands.css'), sheet].join('\n'));
+  assert.equal(sealed, [toolbar, panel, await read('design/panel-section.css'), await read('design/collection-layout.css'), await read('design/skills-commands.css'), sheet].join('\n'));
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(match => match[1]),
     ['./shared-ui-profile.css', './styles.css']);
   assert.doesNotMatch(html, /<style\b|\sstyle\s*=/i);
@@ -71,8 +71,10 @@ test('the Functions tab and inline editor use their pinned implementations', asy
   assert.ok(bundle.startsWith(editor));
   assert.ok(panelBundle.includes(panel.slice(panel.indexOf('\n') + 1)));
   const binding = await read('sheets/workbook-panel.mjs');
-  const skills = await read('design/skills-commands.js');
-  assert.ok(panelBundle.includes(skills.slice(skills.indexOf('\n') + 1)));
+  for (const name of ['skills-commands', 'panel-section', 'collection-layout']) {
+    const owned = await read(`design/${name}.js`);
+    assert.ok(panelBundle.includes(owned.replace(/^(?:import [^\n]*\n)+/, '')), `${name} must use the pinned implementation`);
+  }
   assert.match(binding, /mountFloatingPanel\(trigger/);
   assert.match(binding, /mountSkillsCommandsReference\(/);
   assert.match(html, /data-panel-tab="functions" data-panel-label="Functions"/);
