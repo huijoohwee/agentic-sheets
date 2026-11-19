@@ -354,8 +354,152 @@ export function mountFloatingPanel(trigger, root, {
 }
 
 
+/** Canonical section mechanics. Hosts own content, persistence and available geometry. */
+export const PANEL_SECTION = Object.freeze({
+  section: 'agentic-panel-section', header: 'agentic-panel-section-header',
+  title: 'agentic-panel-section-title', actions: 'agentic-panel-section-actions',
+  body: 'agentic-panel-section-body', scroll: 'agentic-panel-scroll-region',
+  defaultCollapsed: true, expand: 'Expand section', collapse: 'Collapse section',
+  expandAll: 'Expand All', collapseAll: 'Collapse All',
+})
+
+/** Restore focus before hiding content, without stealing focus from another section. */
+export function recoverSectionFocus(body, trigger) {
+  if (body?.contains(body.ownerDocument.activeElement)) trigger?.focus({ preventScroll: true })
+}
+
+export function isSectionGroupCollapsed(keys, collapsedKeys) {
+  return keys.length > 0 && keys.every(key => collapsedKeys.has(key))
+}
+export function updateSectionGroup(previous, key, collapsed) {
+  if (previous.has(key) === collapsed) return previous
+  const next = new Set(previous)
+  if (collapsed) next.add(key)
+  else next.delete(key)
+  return next
+}
+
+/** A native disclosure keeps the summary as the sole keyboard target and exposes a document heading. */
+export function createPanelSectionSummary(doc, label, level = 3) {
+  if (!Number.isInteger(level) || level < 1 || level > 6) throw new RangeError('Invalid section heading level')
+  const summary = doc.createElement('summary')
+  summary.className = PANEL_SECTION.header + ' agentic-panel-disclosure-summary'
+  const heading = doc.createElement('h' + level)
+  heading.className = PANEL_SECTION.title + ' agentic-panel-section-toggle'
+  const text = doc.createElement('span')
+  text.append(label)
+  const chevron = createDesignIcon('ChevronDown', doc)
+  chevron.classList.add('agentic-disclosure-chevron')
+  heading.append(text, chevron)
+  summary.append(heading)
+  return summary
+}
+
+export function setPanelSectionExpanded(section, expanded) {
+  if (section?.localName !== 'details' || typeof expanded !== 'boolean')
+    throw new TypeError('A details section and boolean expansion state are required')
+  const trigger = section.querySelector(':scope > summary')
+  if (!trigger) throw new TypeError('A panel section requires a direct summary')
+  if (!expanded && section.contains(section.ownerDocument.activeElement)
+    && !trigger.contains(section.ownerDocument.activeElement)) trigger.focus({ preventScroll: true })
+  if (section.open !== expanded) section.open = expanded
+}
+
+const installations = new WeakMap()
+/** Enhance opted-in native details, retaining their nodes, events, values and native keys. */
+export function installPanelSections(root = globalThis.document) {
+  if (!root?.querySelectorAll || !root.addEventListener) throw new TypeError('A DOM root is required')
+  if (installations.has(root)) return installations.get(root)
+  const selector = 'details[data-agentic-section]'
+  const prepare = section => {
+    const summary = section.querySelector(':scope > summary')
+    if (!summary) throw new TypeError('A panel section requires a direct summary')
+    section.classList.add(PANEL_SECTION.section)
+    summary.classList.add(PANEL_SECTION.header)
+    summary.dataset.agenticSticky = section.dataset.agenticSticky === 'false' ? 'false' : 'true'
+  }
+  const refresh = () => {
+    if (root.matches?.(selector)) prepare(root)
+    root.querySelectorAll(selector).forEach(prepare)
+  }
+  const toggle = event => {
+    const section = event.target
+    if (!section.matches?.(selector) || section.open) return
+    const summary = section.querySelector(':scope > summary')
+    if (section.contains(section.ownerDocument.activeElement) && !summary.contains(section.ownerDocument.activeElement))
+      summary.focus({ preventScroll: true })
+  }
+  const action = event => {
+    const button = event.target.closest?.('[data-agentic-sections-action]')
+    if (!button || !root.contains(button)) return
+    const target = button.getAttribute('aria-controls')
+    const group = target && (root.ownerDocument ?? root).getElementById(target)
+    if (!group || !root.contains(group)) throw new TypeError('Section actions require a local aria-controls group')
+    const sections = [...group.querySelectorAll(selector)]
+    const command = button.dataset.agenticSectionsAction
+    if (!['expand', 'collapse', 'toggle'].includes(command)) throw new TypeError('Unknown section action')
+    const expanded = command === 'expand' || command === 'toggle' && sections.every(section => !section.open)
+    sections.forEach(section => setPanelSectionExpanded(section, expanded))
+  }
+  refresh()
+  root.addEventListener('toggle', toggle, true)
+  root.addEventListener('click', action)
+  const Observer = (root.ownerDocument ?? root).defaultView?.MutationObserver
+  const observer = Observer && new Observer(refresh)
+  observer?.observe(root, { childList: true, subtree: true })
+  let active = true
+  const dispose = () => {
+    if (!active) return
+    active = false
+    observer?.disconnect()
+    root.removeEventListener('toggle', toggle, true)
+    root.removeEventListener('click', action)
+    installations.delete(root)
+  }
+  installations.set(root, dispose)
+  return dispose
+}
+
+
+export const collectionLayouts = Object.freeze([
+  Object.freeze({ layout: 'list', label: 'List layout', icon: 'List' }),
+  Object.freeze({ layout: 'card', label: 'Card layout', icon: 'Rows3' }),
+  Object.freeze({ layout: 'grid', label: 'Grid layout', icon: 'LayoutGrid' }),
+]);
+
+/** Keep the host's layout state and callbacks independent of the shared controls. */
+export function mountCollectionLayoutPicker(host, { layout, label, labelPrefix = '', onChange }) {
+  const doc = host.ownerDocument;
+  const controls = doc.createElement('div');
+  controls.className = 'agentic-toggle-group';
+  controls.setAttribute('role', 'group');
+  controls.setAttribute('aria-label', label);
+  const choices = new Map();
+  for (const choice of collectionLayouts) {
+    const button = doc.createElement('button');
+    const name = labelPrefix ? `${labelPrefix} ${choice.label.toLowerCase()}` : choice.label;
+    button.type = 'button';
+    button.title = name;
+    button.setAttribute('aria-label', name);
+    button.dataset.agenticLayoutChoice = choice.layout;
+    button.append(createDesignIcon(choice.icon, doc));
+    button.addEventListener('click', () => onChange(choice.layout));
+    controls.append(button);
+    choices.set(choice.layout, button);
+  }
+
+  function setLayout(value) {
+    if (!choices.has(value)) throw new RangeError('Unknown collection layout: ' + value);
+    for (const [key, button] of choices) button.setAttribute('aria-pressed', String(key === value));
+  }
+  setLayout(layout);
+  host.replaceChildren(controls);
+  return { setLayout, destroy: () => controls.remove() };
+}
+
+
 export const skillsCommandsTab = Object.freeze({ key: 'skills-commands', label: 'Skills & Commands', icon: 'SquareTerminal' });
-export const initialCatalogFilters = Object.freeze({ prefix: 'all', groupBy: 'subject', query: '' });
+export const initialCatalogFilters = Object.freeze({ prefix: 'all', groupBy: 'subject', query: '', layout: 'list' });
 const prefixes = [['slash', '/', 'Slash commands'], ['hash', '#', 'Hash semantics'], ['at', '@', 'At bindings']];
 const facets = [['subject', 'S', 'Group by Subject'], ['verb', 'V', 'Group by Verb'], ['object', 'O', 'Group by Object']];
 
@@ -371,7 +515,7 @@ export function mountSkillsCommandsHeader(host, onChange) {
   const doc = host.ownerDocument;
   let filters = initialCatalogFilters, toggleGroups;
   const header = element(doc, 'header', 'agentic-skills-header');
-  const heading = element(doc, 'strong', 'agentic-panel-section-title', skillsCommandsTab.label);
+  const heading = element(doc, 'h2', 'agentic-panel-section-title', skillsCommandsTab.label);
   const subtitle = element(doc, 'span', 'agentic-skills-meta', '/ # @ invocation catalog');
   const actions = element(doc, 'div', 'agentic-panel-section-actions');
   function button(label, face, click) {
@@ -385,6 +529,7 @@ export function mountSkillsCommandsHeader(host, onChange) {
   const buttons = [];
   function change(field, value) {
     filters = { ...filters, [field]: value };
+    if (field === 'layout') picker.setLayout(value);
     for (const { node, key, field } of buttons) {
       node.setAttribute('aria-pressed', String(filters[field] === key || filters[field] === 'all'));
     }
@@ -427,21 +572,25 @@ export function mountSkillsCommandsHeader(host, onChange) {
     event.stopPropagation();
     showSearch(false);
   });
-  const disclosure = button('Collapse All', 'Collapse All', () => toggleGroups?.());
+  const disclosure = button(PANEL_SECTION.collapseAll, PANEL_SECTION.collapseAll, () => toggleGroups?.());
   disclosure.className = 'agentic-form-control';
   disclosure.hidden = true;
-  actions.append(group('Skills & Commands prefix', 'prefix', prefixes), group('Skills & Commands group by', 'groupBy', facets), searchToggle, disclosure);
+  const pickerHost = element(doc, 'div');
+  const picker = mountCollectionLayoutPicker(pickerHost, {
+    layout: filters.layout, label: 'Skills & Commands layout', onChange: value => change('layout', value),
+  });
+  actions.append(group('Skills & Commands prefix', 'prefix', prefixes), group('Skills & Commands group by', 'groupBy', facets), pickerHost, searchToggle, disclosure);
   header.append(heading, subtitle, actions, search);
   host.replaceChildren(header);
   return {
     setDisclosure(hasGroups, collapsed, toggle) {
       toggleGroups = toggle;
       disclosure.hidden = !hasGroups;
-      const label = collapsed ? 'Expand All' : 'Collapse All';
+      const label = collapsed ? PANEL_SECTION.expandAll : PANEL_SECTION.collapseAll;
       disclosure.textContent = disclosure.title = label;
       disclosure.setAttribute('aria-label', label);
     },
-    destroy() { header.remove(); },
+    destroy() { picker.destroy(); header.remove(); },
   };
 }
 
@@ -454,13 +603,13 @@ export function mountSkillsCommandsReference(host, entries, sourceLabel) {
   const surface = element(doc, 'section', 'agentic-skills-catalog');
   const head = element(doc, 'div'), body = element(doc, 'div', 'agentic-skills-body');
   const source = element(doc, 'p', 'agentic-skills-meta', sourceLabel);
-  const list = element(doc, 'div', 'agentic-collection agentic-skills-list');
+  const list = element(doc, 'div', 'agentic-collection agentic-skills-groups');
   body.append(source, list);
   surface.append(head, body);
   host.replaceChildren(surface);
   const closed = new Set();
   const header = mountSkillsCommandsHeader(head, render);
-  function render({ prefix, groupBy, query }) {
+  function render({ prefix, groupBy, query, layout }) {
     const groups = new Map();
     const symbol = prefixes.find(([key]) => key === prefix)?.[1];
     const needle = query.trim().toLowerCase();
@@ -476,7 +625,7 @@ export function mountSkillsCommandsReference(host, entries, sourceLabel) {
       const collapsed = sections.every(({ detail }) => !detail.open);
       header.setDisclosure(sections.length > 0, collapsed, () => {
         for (const { key, detail } of sections) {
-          detail.open = collapsed;
+          setPanelSectionExpanded(detail, collapsed);
           if (collapsed) closed.delete(key); else closed.add(key);
         }
         updateDisclosure();
@@ -484,15 +633,23 @@ export function mountSkillsCommandsReference(host, entries, sourceLabel) {
     }
     for (const [name, records] of groups) {
       const key = groupBy + ':' + name;
-      const detail = element(doc, 'details');
+      const detail = element(doc, 'details', PANEL_SECTION.section + ' agentic-skills-group-section');
+      detail.dataset.agenticSection = '';
       detail.open = !closed.has(key);
-      detail.append(element(doc, 'summary', 'agentic-skills-group', name + ' (' + records.length + ')'));
+      const label = element(doc, 'span', 'agentic-skills-group-label', name + ' (' + records.length + ')');
+      const summary = createPanelSectionSummary(doc, label);
+      summary.dataset.agenticSticky = 'true';
+      detail.append(summary);
       const rows = element(doc, 'div', 'agentic-collection');
-      rows.dataset.layout = 'list';
+      rows.dataset.layout = layout;
       for (const { token, summary } of records) {
         const row = element(doc, 'div', 'agentic-collection-item agentic-skills-row');
-        row.dataset.layout = 'list';
-        row.append(element(doc, 'strong', 'agentic-skills-title', token), element(doc, 'span', 'agentic-skills-meta', summary));
+        row.dataset.layout = layout;
+        const symbol = element(doc, 'span', layout === 'card' ? 'agentic-collection-preview' : 'agentic-collection-leading', token[0]);
+        symbol.setAttribute('aria-hidden', 'true');
+        const content = element(doc, 'div');
+        content.append(element(doc, 'div', 'agentic-collection-title', token), element(doc, 'div', 'agentic-skills-meta', summary));
+        row.append(symbol, content);
         rows.append(row);
       }
       detail.append(rows);
