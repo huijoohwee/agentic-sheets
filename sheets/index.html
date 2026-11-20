@@ -43,7 +43,7 @@
       </fieldset>
     </form>
     <section id="grid-section" tabindex="0" aria-label="Scrollable workbook grid">
-      <table role="grid" aria-label="Worksheet 1" aria-rowcount="33" aria-colcount="17">
+      <table role="grid" aria-label="Worksheet 1">
         <thead id="column-head"></thead><tbody id="grid-body"></tbody>
       </table>
     </section>
@@ -59,7 +59,8 @@
       <output id="import-summary" class="agentic-dashboard-observation">No snapshot selected</output>
     </section>
     <footer id="workbook-details" aria-label="Workbook limits and identity">
-      <p data-dashboard-primitive="text">32 × 16 cells · one worksheet · bounded formulas · no Excel file compatibility</p>
+      <output id="dimensions"></output>
+      <p data-dashboard-primitive="text">Enter a value in the next row or column to grow the worksheet. Up to 512 populated cells.</p>
       <output id="identity" class="agentic-dashboard-observation"></output>
     </footer>
   </main>

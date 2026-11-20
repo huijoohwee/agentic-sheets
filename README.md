@@ -1,6 +1,6 @@
 # Agentic Sheets
 
-Agentic Sheets is an offline-first local workbook with a headless ECMAScript module and a browser editor. It accepts text, finite numbers, booleans and same-sheet formulas in one 32 × 16 worksheet. Formulas support arithmetic, unary signs, parentheses, cell references and rectangular SUM ranges. Errors and capacity limits are explicit.
+Agentic Sheets is an offline-first local workbook with a headless ECMAScript module and a browser editor. It accepts text, finite numbers, booleans and same-sheet formulas in one adaptively sized worksheet. Formulas support arithmetic, unary signs, parentheses, cell references and rectangular SUM ranges. Errors and capacity limits are explicit.
 
 ## Run locally
 
@@ -33,6 +33,8 @@ const { workbook } = await executeWorkbook(null, {
 });
 console.log(calculate(workbook).B1.value); // 30
 ```
+
+The browser and headless callers using `fitToCells: true` start with the occupied rectangle, or A1 for an empty sheet. Existing creation commands start at 32 × 16. Writing beyond the last row or column grows either shape. Clearing cells preserves the dimensions. Saved 32 × 16 snapshots reopen at their original size. The local editor supports up to 512 populated cells and 4,096 grid positions, with at most 512 rows or 128 columns. Formula references are evaluated within the accepted worksheet dimensions.
 
 Use `setCells` with the accepted revision for edits. Download an accepted snapshot before replacing a workbook or moving it to another origin. Restore validates the file and advances the live revision. An explicit clone assigns fresh workbook and sheet IDs. Browser storage can be evicted. Source rollback preserves user data.
 

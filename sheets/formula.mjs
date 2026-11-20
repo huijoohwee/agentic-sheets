@@ -1,4 +1,4 @@
-import { CONTRACT, LIMITS, SheetsError, byteLength, coordinate, addressOf, requireValue } from './schema.mjs';
+import { CONTRACT, LIMITS, STARTER_GRID, SheetsError, byteLength, coordinate, addressOf, requireValue } from './schema.mjs';
 class FormulaError extends Error { constructor(code) { super(code); this.code = code; } }
 const problem = code => { throw new FormulaError(code); };
 const errors = { PARSE: '#PARSE!', REFERENCE: '#REF!', VALUE: '#VALUE!', DIV_ZERO: '#DIV/0!', CYCLE: '#CYCLE!', NUMBER: '#NUM!' };
@@ -25,15 +25,17 @@ function scan(source, visit, draft = false) {
   }
   return true;
 }
-function rectangle(start, end) {
-  const a = coordinate(start), b = coordinate(end), addresses = [];
+function rectangle(start, end, bounds) {
+  const a = coordinate(start, bounds), b = coordinate(end, bounds), addresses = [];
+  if (b.row < a.row || b.column < a.column) return addresses;
+  requireValue((b.row - a.row + 1) * (b.column - a.column + 1) <= LIMITS.edges, 'LIMIT', 'Range exceeds the dependency budget');
   for (let row = a.row; row <= b.row; row++) {
     for (let column = a.column; column <= b.column; column++) addresses.push(addressOf(row, column));
   }
   return addresses;
 }
 // Inspect bounded, potentially incomplete editor text without reading or changing a workbook.
-export function inspectFormulaDraft(source, caret = source?.length) {
+export function inspectFormulaDraft(source, caret = source?.length, bounds = STARTER_GRID) {
   const empty = { references: [], functionName: null };
   if (typeof source !== 'string' || !source.startsWith('=') || source.length > LIMITS.formulaBytes
       || byteLength(source) > LIMITS.formulaBytes) return empty;
@@ -58,15 +60,15 @@ export function inspectFormulaDraft(source, caret = source?.length) {
     const label = hasEnd ? start + ':' + end : start;
     if (references.has(label)) continue;
     try {
-      const addresses = rectangle(start, end);
+      const addresses = rectangle(start, end, bounds);
       if (addresses.length) references.set(label, { label, addresses });
     } catch (failure) {
-      if (!(failure instanceof SheetsError) || failure.code !== 'REFERENCE') throw failure;
+      if (!(failure instanceof SheetsError) || !['REFERENCE', 'LIMIT'].includes(failure.code)) throw failure;
     }
   }
   return { references: [...references.values()], functionName: calls.includes(sum.name) ? sum.name : null };
 }
-export function compileFormula(source) {
+export function compileFormula(source, bounds = STARTER_GRID) {
   const tokens = [], dependencies = new Set();
   let index = 0;
   if (!scan(source, token => {
@@ -74,7 +76,7 @@ export function compileFormula(source) {
     requireValue(tokens.length <= LIMITS.tokens, 'LIMIT', 'Formula token limit exceeded');
   })) problem('PARSE');
   const ref = token => {
-    try { coordinate(token); } catch { problem('REFERENCE'); }
+    try { coordinate(token, bounds); } catch { problem('REFERENCE'); }
     dependencies.add(token);
     return { kind: 'ref', address: token };
   };
@@ -86,7 +88,7 @@ export function compileFormula(source) {
     if (token === sum.name) {
       take('(');
       const start = ref(tokens[index++]); take(':'); const end = ref(tokens[index++]); take(')');
-      const addresses = rectangle(start.address, end.address);
+      const addresses = rectangle(start.address, end.address, bounds);
       if (!addresses.length) problem('REFERENCE');
       return { kind: 'sum', items: addresses.map(ref) };
     }
@@ -122,7 +124,7 @@ export function calculate(workbook) {
   for (const [address, cell] of Object.entries(workbook.cells)) {
     if (cell.type !== 'formula') continue;
     try {
-      const code = compileFormula(cell.value); compiled.set(address, code);
+      const code = compileFormula(cell.value, workbook); compiled.set(address, code);
       edges += code.dependencies.size;
       requireValue(edges <= LIMITS.edges, 'LIMIT', 'Workbook dependency limit exceeded');
     } catch (error) {
