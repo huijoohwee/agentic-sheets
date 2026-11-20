@@ -1,15 +1,15 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "1c6c8cac6ebb5a27391887aa26016e775c8feb94f19d841aa185b1b32b8709a8",
+  "sourceDigest": "86f1e6179e6b7fa5251c928154fa0aaa4e4672616a6f6a267894efa54ced3d1a",
   "designSystem": {
-    "revision": "fd18c30f7820bace18b450f9fc40206392c0de28",
+    "revision": "cb062fec5d0923f8da74a9fae3dcabb73e608aa1",
     "profileSource": "0e1a21ff98a02604b7f733c6705380133c3d7d1c",
-    "profileSha256": "cb69acc13a7a9e9687675b354abd0bbc860ce68bbbb50e4f68d9efa2dbbbacfd",
+    "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "cb2ce512d6386bd2fc5ddb2d9dddce1e47b3549d3b1cc807e1697f56f29f699b"
   },
-  "artifactDigest": "4fbef04c47bb45df9e41551f3cf55e94b53c12668fc789747200fd4f9d0368b5",
-  "totalBytes": 165233,
+  "artifactDigest": "84f088456f747ed4d2f5029e1ba62588671ea28ad49b7194a5d958b870fce9c0",
+  "totalBytes": 166977,
   "inputs": [
     {
       "path": "design/collection-layout.css",
@@ -28,8 +28,8 @@
     },
     {
       "path": "design/floating-panel.js",
-      "bytes": 5179,
-      "sha256": "ff36f461589700ed655a98a0d4c73e3677dac8ccf0383e2b15ff0659c129eee5"
+      "bytes": 6007,
+      "sha256": "7d6e1d91750534b4edeb75c65861b87df94c55587a3f4a9a74a0f0bb5c945670"
     },
     {
       "path": "design/icons.json",
@@ -58,13 +58,13 @@
     },
     {
       "path": "design/shared-ui-profile.css",
-      "bytes": 24353,
-      "sha256": "cb69acc13a7a9e9687675b354abd0bbc860ce68bbbb50e4f68d9efa2dbbbacfd"
+      "bytes": 25314,
+      "sha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17"
     },
     {
       "path": "design/shared-ui-profile.pin.json",
       "bytes": 3237,
-      "sha256": "134b9ea9cb495c5329dbf51b1bdff32306948909300ebe92527e6e71f9be37fa"
+      "sha256": "16facc5bf3b86797473f7453c6eb85e8f3ecb41f718184baef309414edeee384"
     },
     {
       "path": "design/skills-commands.css",
@@ -128,8 +128,8 @@
     },
     {
       "path": "sheets/index.html",
-      "bytes": 5482,
-      "sha256": "07809fb15d0a8ba20b6dff43e1d51527969479034e906126b4bd9d88886ada8b"
+      "bytes": 5533,
+      "sha256": "4c0a5f5aa275bbb8f51588238026946d7f6392e292c2686f97a74c4983e782c9"
     },
     {
       "path": "sheets/invocation-catalog.json",
@@ -158,8 +158,8 @@
     },
     {
       "path": "sheets/styles.css",
-      "bytes": 1708,
-      "sha256": "7bd9f8105c8c3a111a1bba33c776a5030429e3a4c0cc7b08f00ab8acae0ff3ff"
+      "bytes": 1612,
+      "sha256": "2b4d2864e84ca4b0240132c8bdae74969636c047bda3758e95d1be097d2f1611"
     },
     {
       "path": "sheets/sw.js",
@@ -185,8 +185,8 @@
     },
     {
       "path": "floating-panel.mjs",
-      "bytes": 51076,
-      "sha256": "1447c40bcdface5f70fc1ba65be0585abfdb2a4d26dadb41c81f6dd076841647"
+      "bytes": 51904,
+      "sha256": "5e85159dae2f3b318e5d7fd08ebf0b4ce02abef22280ec7e56b4649aa98530c2"
     },
     {
       "path": "formula.mjs",
@@ -195,8 +195,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5482,
-      "sha256": "07809fb15d0a8ba20b6dff43e1d51527969479034e906126b4bd9d88886ada8b"
+      "bytes": 5533,
+      "sha256": "4c0a5f5aa275bbb8f51588238026946d7f6392e292c2686f97a74c4983e782c9"
     },
     {
       "path": "LICENSE",
@@ -220,8 +220,8 @@
     },
     {
       "path": "shared-ui-profile.css",
-      "bytes": 24353,
-      "sha256": "cb69acc13a7a9e9687675b354abd0bbc860ce68bbbb50e4f68d9efa2dbbbacfd"
+      "bytes": 25314,
+      "sha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17"
     },
     {
       "path": "storage.mjs",
@@ -230,13 +230,13 @@
     },
     {
       "path": "styles.css",
-      "bytes": 31112,
-      "sha256": "dc8fa8e04eb54bbdbe4e7c392a9b3c2caaa839fce1b35a3e9abfdf5c39e334da"
+      "bytes": 31016,
+      "sha256": "6e07266a2cf99d0ed3353dcd53133234a11c6afd5600509dfbe4e568bc17ae75"
     },
     {
       "path": "sw.js",
       "bytes": 1309,
-      "sha256": "fca581c519350b7a72c79638f2a7758195f1e6b37c10336b7046e8727c66358a"
+      "sha256": "7b44223c4dfe80613bb541e1ffe65caed2a0908fd007525bd9cd2f1952157b1e"
     }
   ]
 }

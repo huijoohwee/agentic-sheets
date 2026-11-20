@@ -12,6 +12,8 @@ test('the editor uses the sealed owner styles and native named targets', async (
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(match => match[1]),
     ['./shared-ui-profile.css', './styles.css']);
   assert.doesNotMatch(html, /<style\b|\sstyle\s*=/i);
+  assert.match(html, /<body data-agentic-typography\b/);
+  assert.match(html, /<label class="agentic-fact-label" for="cell-input">/);
   const actions = html.match(/<nav\b[^>]*id="workbook-actions"[^>]*>[\s\S]*?<\/nav>/)?.[0];
   assert.match(actions, /class="agentic-toolbar" data-scroll aria-label=/);
   for (const [tag] of html.matchAll(/<button\b[^>]*>/g)) {
@@ -44,7 +46,7 @@ test('workbook CSS reserves shared control styling and target geometry for the d
     if (selector === 'body') {
       assert.deepEqual(declarations.split(';').map(part => part.trim()).filter(Boolean).sort(), [
         'background: var(--agentic-panel-background)', 'color: var(--agentic-panel-foreground)',
-        'font: var(--agentic-font-size-body)/var(--agentic-line-height-body) var(--agentic-font-sans)', 'margin: 0',
+        'margin: 0',
       ]);
     } else if (grid.has(selector)) {
       for (const [, property, value] of declarations.matchAll(/([\w-]+)\s*:\s*([^;]+);/g)) {

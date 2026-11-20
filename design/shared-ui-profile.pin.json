@@ -4,11 +4,11 @@
     "id": "shared-ui",
     "owner": "github.com/huijoohwee/agentic-design-system",
     "sourceRevision": "0e1a21ff98a02604b7f733c6705380133c3d7d1c",
-    "registryRevision": "fd18c30f7820bace18b450f9fc40206392c0de28",
+    "registryRevision": "cb062fec5d0923f8da74a9fae3dcabb73e608aa1",
     "sourcePath": "site/tokens/shared-ui-profile.json",
     "sourceSha256": "sha256:bab5811bcd4aa82065d4671d7876c6d9085a25f1c10e63932f8b81a53255bdb3",
     "projectionPath": "site/vendor/shared-ui-profile.css",
-    "projectionSha256": "sha256:cb69acc13a7a9e9687675b354abd0bbc860ce68bbbb50e4f68d9efa2dbbbacfd"
+    "projectionSha256": "sha256:ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17"
   },
   "metrics": {
     "rowHeight": 38,
@@ -37,7 +37,7 @@
   },
   "floatingPanel": {
     "sourcePath": "site/floating-panel.js",
-    "sha256": "sha256:ff36f461589700ed655a98a0d4c73e3677dac8ccf0383e2b15ff0659c129eee5"
+    "sha256": "sha256:7d6e1d91750534b4edeb75c65861b87df94c55587a3f4a9a74a0f0bb5c945670"
   },
   "floatingPanelStyles": {
     "sourcePath": "site/floating-panel.css",
