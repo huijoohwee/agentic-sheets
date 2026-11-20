@@ -43,13 +43,13 @@ export function mountInlineEditor(host, { value, label, describedBy, onInput, on
 }
 
 import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, listFunctions, sampleCells } from './core.mjs';
-import { addressOf, coordinate, parseInput, inputOf } from './schema.mjs';
+import { addressOf, columnLabel, fitsGrid, parseInput, inputOf } from './schema.mjs';
 import { createSheetsStore } from './storage.mjs';
 const $ = id => document.getElementById(id);
 const store = createSheetsStore({ authorize: () => true }); // Local demo policy; not same-origin authentication.
 let workbook = null, selected = 'A1', dirty = false, busy = true, imported = null, importGeneration = 0;
 const cells = new Map();
-let inlineEditor = null;
+let inlineEditor = null, gridRows = 0, gridColumns = 0;
 const uuid = () => crypto.randomUUID();
 const error = value => { $('error').hidden = !value; $('error').textContent = value ? `${value.code ?? 'ERROR'}: ${value.message ?? value}` : ''; };
 function state() {
@@ -133,7 +133,7 @@ let inspectedDraft = null, inspectedCaret = null, shownLabels = '';
 const markedReferences = new Set();
 function showFormulaHints(source, caret) {
   if (source === inspectedDraft && caret === inspectedCaret) return;
-  const { references, functionName } = inspectFormulaDraft(source, caret);
+  const { references, functionName } = inspectFormulaDraft(source, caret, { rows: gridRows, columns: gridColumns });
   const labels = references.map(reference => reference.label).join(' ');
   if (labels !== shownLabels) {
     shownLabels = labels;
@@ -149,7 +149,7 @@ function showFormulaHints(source, caret) {
       item.textContent = label;
       referenceList.append(item);
       for (const address of addresses) {
-        if (markedReferences.has(address)) continue;
+        if (markedReferences.has(address) || !cells.has(address)) continue;
         cells.get(address).dataset.agenticReference = slot;
         markedReferences.add(address);
       }
@@ -188,6 +188,11 @@ function closeInlineEditor() {
 }
 function render() {
   closeInlineEditor();
+  const rows = workbook?.rows ?? 1, columns = workbook?.columns ?? 1;
+  // A trailing editable edge lets the next accepted value grow the saved sheet.
+  const nextRows = fitsGrid(rows + 1, columns) ? rows + 1 : rows;
+  const nextColumns = fitsGrid(rows, columns + 1) ? columns + 1 : columns;
+  if (nextRows !== gridRows || nextColumns !== gridColumns) buildGrid(nextRows, nextColumns);
   const results = workbook ? calculate(workbook) : {};
   for (const [address, element] of cells) {
     const cell = workbook?.cells[address], result = results[address];
@@ -199,6 +204,7 @@ function render() {
     element.setAttribute('aria-label', `${address}, ${text || 'empty'}${cell?.type === 'formula' ? `, formula ${cell.value}` : ''}`);
     markSelected(element, selected === address);
   }
+  $('dimensions').textContent = workbook ? workbook.rows + ' rows × ' + workbook.columns + ' columns' : '';
   $('identity').textContent = workbook ? `Workbook ${workbook.workbookId} · worksheet ${workbook.sheetId}` : '';
   editor(); state();
 }
@@ -241,16 +247,26 @@ function beginInlineEdit(replacement) {
   field.setSelectionRange(field.value.length, field.value.length);
   inspectEditor();
 }
-function buildGrid() {
+function buildGrid(rows, columns) {
+  showFormulaHints(null, null);
+  cells.clear();
+  $('column-head').replaceChildren(); $('grid-body').replaceChildren();
+  gridRows = rows; gridColumns = columns;
+  const grid = $('grid-section').querySelector('[role="grid"]');
+  grid.setAttribute('aria-rowcount', String(rows + 1));
+  grid.setAttribute('aria-colcount', String(columns + 1));
   const header = document.createElement('tr'), corner = document.createElement('th'); corner.textContent = 'Cell'; header.append(corner);
-  for (let column = 0; column < LIMITS.columns; column++) { const th = document.createElement('th'); th.scope = 'col'; th.textContent = String.fromCharCode(65 + column); header.append(th); }
+  for (let column = 0; column < columns; column++) { const th = document.createElement('th'); th.scope = 'col'; th.textContent = columnLabel(column); header.append(th); }
   $('column-head').append(header);
-  for (let row = 0; row < LIMITS.rows; row++) {
+  for (let row = 0; row < rows; row++) {
     const tr = document.createElement('tr'), th = document.createElement('th'); th.scope = 'row'; th.textContent = String(row + 1); tr.append(th);
-    for (let column = 0; column < LIMITS.columns; column++) {
+    for (let column = 0; column < columns; column++) {
       const address = addressOf(row, column), td = document.createElement('td'); td.setAttribute('role', 'gridcell');
       td.className = 'agentic-grid-cell';
       td.id = `cell-${address}`;
+      if (row === rows - 1 && column === columns - 1 && !fitsGrid(rows, columns)) {
+        td.setAttribute('aria-disabled', 'true'); tr.append(td); continue;
+      }
       td.addEventListener('click', event => {
         if (event.target !== td) return;
         if (selected === address && workbook) beginInlineEdit();
@@ -262,17 +278,18 @@ function buildGrid() {
         if (workbook && event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
           event.preventDefault(); beginInlineEdit(event.key); return;
         }
-        const { row: r, column: c } = coordinate(address), offsets = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
+        const offsets = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
         if (event.key in offsets) {
           event.preventDefault(); const [dr, dc] = offsets[event.key];
-          const next = addressOf(Math.max(0, Math.min(31, r + dr)), Math.max(0, Math.min(15, c + dc)));
-          if (select(next, true)) cells.get(next).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+          const next = addressOf(Math.max(0, Math.min(rows - 1, row + dr)), Math.max(0, Math.min(columns - 1, column + dc)));
+          if (cells.has(next) && select(next, true)) cells.get(next).scrollIntoView({ block: 'nearest', inline: 'nearest' });
         }
       });
       cells.set(address, td); tr.append(td);
     }
     $('grid-body').append(tr);
   }
+  if (!cells.has(selected)) selected = 'A1';
 }
 async function act(operation, payload) {
   if (busy) return;
@@ -293,8 +310,8 @@ markWorksheet.addEventListener('click', () => {
   else delete grid.dataset.agenticAnnotationTarget;
   markWorksheet.setAttribute('aria-pressed', String(marked));
 });
-$('sample').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Line-item workbook', cells: sampleCells() }));
-$('blank').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Local workbook' }));
+$('sample').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Line-item workbook', fitToCells: true, cells: sampleCells() }));
+$('blank').addEventListener('click', () => act('create', { workbookId: uuid(), sheetId: uuid(), name: 'Local workbook', fitToCells: true }));
 async function commitDraft() {
   if (!workbook || busy) return;
   const editingInCell = Boolean(inlineEditor);
@@ -355,7 +372,7 @@ function restore(mode) {
 }
 $('restore').addEventListener('click', () => restore('replace'));
 $('clone').addEventListener('click', () => restore('clone'));
-buildGrid(); render();
+render();
 try { workbook = await store.load(); render(); } catch (failure) { error(failure); }
 finally { busy = false; state(); }
 async function offline() {

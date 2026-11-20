@@ -1,15 +1,15 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "86f1e6179e6b7fa5251c928154fa0aaa4e4672616a6f6a267894efa54ced3d1a",
+  "sourceDigest": "82420c1ac09ae10570aca7f2f35810068b006583c1c80ca09797af25c7df27c0",
   "designSystem": {
     "revision": "cb062fec5d0923f8da74a9fae3dcabb73e608aa1",
     "profileSource": "0e1a21ff98a02604b7f733c6705380133c3d7d1c",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "cb2ce512d6386bd2fc5ddb2d9dddce1e47b3549d3b1cc807e1697f56f29f699b"
   },
-  "artifactDigest": "84f088456f747ed4d2f5029e1ba62588671ea28ad49b7194a5d958b870fce9c0",
-  "totalBytes": 166977,
+  "artifactDigest": "708d9926ab0519376aa5b52291e9385c789a8df89c7769f4080305a0b12c5b9a",
+  "totalBytes": 169871,
   "inputs": [
     {
       "path": "design/collection-layout.css",
@@ -113,23 +113,23 @@
     },
     {
       "path": "sheets/app.mjs",
-      "bytes": 17240,
-      "sha256": "10e0641abdac86918755587f607f2239b0d52d19512d6834a0c37dc24665a33c"
+      "bytes": 18395,
+      "sha256": "9ec4f1c33c134ea6e4cc2fb14cc6be1a3c496c672db3031a3d63059cf148e8e4"
     },
     {
       "path": "sheets/core.mjs",
-      "bytes": 6229,
-      "sha256": "fff4c946d9808bd4e556636df96424fc5e17cf189596db217ede14a6a3ecf15f"
+      "bytes": 6749,
+      "sha256": "f0a799f5ba82577db48bacd04812d61cf0a0da2a765a8b85dc1df9b073802221"
     },
     {
       "path": "sheets/formula.mjs",
-      "bytes": 8064,
-      "sha256": "6cdae52f25e77424e8700dbba2ed2bb17ca43d1dd842b8c279a0e46e6af30c96"
+      "bytes": 8391,
+      "sha256": "7af9d237c3495198e1e985761914286d1667e8a03defea51fa9262ecda959c85"
     },
     {
       "path": "sheets/index.html",
-      "bytes": 5533,
-      "sha256": "4c0a5f5aa275bbb8f51588238026946d7f6392e292c2686f97a74c4983e782c9"
+      "bytes": 5542,
+      "sha256": "e91787199ef364e732729985d250c116eda63f68b2386355b837156fd58a0c07"
     },
     {
       "path": "sheets/invocation-catalog.json",
@@ -148,8 +148,8 @@
     },
     {
       "path": "sheets/schema.mjs",
-      "bytes": 7049,
-      "sha256": "90261000782576b3556caed5d9323a19ae47eed38e3c42505448dc78a9f4a0a4"
+      "bytes": 7932,
+      "sha256": "8e2605a7e175480f60533ee1d6d00f5d2d287d91e67913b67e5305a16cd6c3f7"
     },
     {
       "path": "sheets/storage.mjs",
@@ -175,13 +175,13 @@
   "files": [
     {
       "path": "app.mjs",
-      "bytes": 19068,
-      "sha256": "d54ba8db653edbbc56c277b16653a612511c946b54368bcab67904c82001e872"
+      "bytes": 20223,
+      "sha256": "0dbb4cac01686823aa56f22a6de1c9db0eb6376a26c74be80282881ec021cb83"
     },
     {
       "path": "core.mjs",
-      "bytes": 6229,
-      "sha256": "fff4c946d9808bd4e556636df96424fc5e17cf189596db217ede14a6a3ecf15f"
+      "bytes": 6749,
+      "sha256": "f0a799f5ba82577db48bacd04812d61cf0a0da2a765a8b85dc1df9b073802221"
     },
     {
       "path": "floating-panel.mjs",
@@ -190,13 +190,13 @@
     },
     {
       "path": "formula.mjs",
-      "bytes": 8064,
-      "sha256": "6cdae52f25e77424e8700dbba2ed2bb17ca43d1dd842b8c279a0e46e6af30c96"
+      "bytes": 8391,
+      "sha256": "7af9d237c3495198e1e985761914286d1667e8a03defea51fa9262ecda959c85"
     },
     {
       "path": "index.html",
-      "bytes": 5533,
-      "sha256": "4c0a5f5aa275bbb8f51588238026946d7f6392e292c2686f97a74c4983e782c9"
+      "bytes": 5542,
+      "sha256": "e91787199ef364e732729985d250c116eda63f68b2386355b837156fd58a0c07"
     },
     {
       "path": "LICENSE",
@@ -215,8 +215,8 @@
     },
     {
       "path": "schema.mjs",
-      "bytes": 7049,
-      "sha256": "90261000782576b3556caed5d9323a19ae47eed38e3c42505448dc78a9f4a0a4"
+      "bytes": 7932,
+      "sha256": "8e2605a7e175480f60533ee1d6d00f5d2d287d91e67913b67e5305a16cd6c3f7"
     },
     {
       "path": "shared-ui-profile.css",
@@ -236,7 +236,7 @@
     {
       "path": "sw.js",
       "bytes": 1309,
-      "sha256": "7b44223c4dfe80613bb541e1ffe65caed2a0908fd007525bd9cd2f1952157b1e"
+      "sha256": "d2e29c639da688763437d98b41458a2188d1667b6c7f0c0ccf80ed503a18e365"
     }
   ]
 }

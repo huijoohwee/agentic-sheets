@@ -19,7 +19,7 @@ try {
     });
     await page.goto(url);
     await page.getByRole('button', { name: 'Create sample' }).click();
-    await page.waitForFunction(() => document.querySelector('#cell-D4').textContent === '80');
+    await page.waitForFunction(() => document.querySelector('#cell-D4')?.textContent === '80');
     await page.getByRole('button', { name: 'Mark worksheet' }).click();
     const input = page.locator('#cell-input'), cell = page.locator('#cell-E4');
     await cell[options.hasTouch ? 'tap' : 'click']();
@@ -89,12 +89,12 @@ try {
     assert.equal(await inline.inputValue(), draft);
     await inline.dispatchEvent('compositionend');
     await inline.press('Enter');
-    await page.waitForFunction(() => document.querySelector('#cell-E4').textContent === '107');
+    await page.waitForFunction(() => document.querySelector('#cell-E4')?.textContent === '107');
     assert.equal(await page.locator('[data-agentic-reference]').count(), 0);
     await page.waitForFunction(() => navigator.serviceWorker.controller);
     await context.setOffline(true);
     await page.reload();
-    await page.waitForFunction(() => document.querySelector('#cell-E4').textContent === '107');
+    await page.waitForFunction(() => document.querySelector('#cell-E4')?.textContent === '107');
     await cell.dblclick();
     assert.equal(await inline.inputValue(), draft);
     await input.focus();
@@ -105,7 +105,7 @@ try {
     assert.equal(await input.inputValue(), draft);
     await inline.fill('=2+3');
     await inline.press('Enter');
-    await page.waitForFunction(() => document.querySelector('#cell-E4').textContent === '5');
+    await page.waitForFunction(() => document.querySelector('#cell-E4')?.textContent === '5');
     assert.match(await page.locator('#status').textContent(), /revision 3 saved/);
     await cell.press('Enter');
     await inline.press('Enter');
@@ -114,20 +114,20 @@ try {
     if (mode === 'desktop') {
       const peer = await context.newPage();
       await peer.goto(url);
-      await peer.waitForFunction(() => document.querySelector('#cell-E4').textContent === '5');
+      await peer.waitForFunction(() => document.querySelector('#cell-E4')?.textContent === '5');
       await cell.press('F2');
       await inline.fill('19');
       await peer.locator('#cell-E4').dblclick();
       const peerInput = peer.getByRole('textbox', { name: 'Edit cell E4' });
       await peerInput.fill('23'); await peerInput.press('Enter');
-      await peer.waitForFunction(() => document.querySelector('#cell-E4').textContent === '23');
+      await peer.waitForFunction(() => document.querySelector('#cell-E4')?.textContent === '23');
       await inline.press('Enter');
       await page.waitForFunction(() => document.querySelector('#error').textContent.includes('CONFLICT'));
       assert.equal(await inline.inputValue(), '19');
       assert.equal(await input.inputValue(), '19');
       assert.equal(await inline.evaluate(e => e.readOnly), false);
       await page.getByRole('button', { name: 'Discard draft & reload' }).click();
-      await page.waitForFunction(() => document.querySelector('#cell-E4').textContent === '23');
+      await page.waitForFunction(() => document.querySelector('#cell-E4')?.textContent === '23');
       assert.equal(await inline.count(), 0);
       await peer.close();
     }

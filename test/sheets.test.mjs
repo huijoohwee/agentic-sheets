@@ -38,7 +38,7 @@ test('stale revisions, unknown fields, invalid cell coordinates/types and ID reu
   assert.equal(replay.workbook.revision, first.workbook.revision);
   await assert.rejects(executeWorkbook(first.workbook, { ...edit, payload: { ...edit.payload, changes: [{ address: 'A5', cell: cell(6) }] } }), { code: 'OPERATION_REUSE' });
   await assert.rejects(executeWorkbook(first.workbook, change(workbook, [{ address: 'A5', cell: null }], 'another')), { code: 'CONFLICT' });
-  for (const changes of [[{ address: 'Z1', cell: cell(1) }], [{ address: 'A1', cell: { type: 'number', value: Infinity } }], [{ address: 'A1', cell: cell(1) }, { address: 'A1', cell: null }]]) await assert.rejects(executeWorkbook(workbook, change(workbook, changes)));
+  for (const changes of [[{ address: 'XFE1', cell: cell(1) }], [{ address: 'A1', cell: { type: 'number', value: Infinity } }], [{ address: 'A1', cell: cell(1) }, { address: 'A1', cell: null }]]) await assert.rejects(executeWorkbook(workbook, change(workbook, changes)));
   await assert.rejects(executeWorkbook(workbook, { ...change(workbook, [{ address: 'A1', cell: null }]), unexpected: true }), { code: 'INVALID' });
 });
 test('prepared commands capture private nested bytes before the caller can mutate them', async () => {
@@ -81,4 +81,24 @@ test('limits cover UTF-8, formula count, tokens, depth, dependencies and receipt
 test('typed input round trips literal formulas, numeric-looking text and booleans', () => {
   for(const item of [{type:'text',value:'=A1'}, {type:'text',value:'001'}, {type:'text',value:'true'}, {type:'text',value:"'x"}, {type:'text',value:''},cell(true),cell(12),cell('name')]) assert.deepEqual(parseInput(inputOf(item)),item);
   assert.equal(parseInput(''),null);
+});
+
+test('adaptive extents survive export, clone and growth across row 32 and column Z', async () => {
+  const payload = { workbookId: 'rules', sheetId: 'cases', name: 'Rule boundaries', fitToCells: true,
+    cells: { A1: cell('Boundary'), D60: cell(40) } };
+  const { workbook } = await executeWorkbook(null, command('create', 0, payload));
+  assert.deepEqual([workbook.rows, workbook.columns], [60, 4]);
+  const source = decodeSnapshot(encodeSnapshot(workbook));
+  const clone = (await executeWorkbook(null, command('restore', 0, { workbookId:'rules', snapshot:source,
+    mode:'clone', newWorkbookId:'copy', newSheetId:'copied_cases' }))).workbook;
+  const edit = change(clone, [{ address:'AA61', cell:cell('=D60+2') }]);
+  const grown = (await executeWorkbook(clone, edit)).workbook;
+  assert.deepEqual([grown.rows, grown.columns, calculate(grown).AA61.value], [61, 27, 42]);
+  assert.equal((await executeWorkbook(grown, edit)).replayed, true);
+  const cleared = (await executeWorkbook(grown, change(grown, [{ address:'AA61', cell:null }]))).workbook;
+  assert.deepEqual([cleared.rows, cleared.columns], [61, 27]);
+  assert.throws(() => decodeSnapshot(JSON.stringify({ ...source, rows: 59 })), { code:'REFERENCE' });
+  await assert.rejects(executeWorkbook(grown, change(grown, [{address:'DX512',cell:cell(1)}])), {code:'LIMIT'});
+  assert.deepEqual(calculate(grown).AA61, {value:42});
+  assert.deepEqual([(await create({})).workbook.rows, (await create({})).workbook.columns], [32, 16]);
 });

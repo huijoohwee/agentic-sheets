@@ -119,7 +119,7 @@ async function discoverOffline() {
   assert.match(await page.locator('#status').textContent(), /revision 4 saved/);
   await page.reload();
   const cell = page.locator('#cell-B1');
-  await page.waitForFunction(() => document.querySelector('#cell-B1').textContent === '5');
+  await page.waitForFunction(() => document.querySelector('#cell-B1')?.textContent === '5');
   await cell.tap();
   await cell.tap();
   const inline = cell.getByRole('textbox');
@@ -156,7 +156,7 @@ async function rehearseRollback() {
   for (const [url, hasCatalog] of [[candidate, true], [predecessor, false]]) {
     serving = url;
     await page.reload();
-    await page.waitForFunction(() => document.querySelector('#cell-B1').textContent === '5');
+    await page.waitForFunction(() => document.querySelector('#cell-B1')?.textContent === '5');
     assert.equal(await page.locator('#invocation-catalog').count() === 1, hasCatalog);
     assert.match(await page.locator('#status').textContent(), /revision 4 saved/);
     assert.equal(await acceptedBytes(page), accepted);
