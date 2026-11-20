@@ -1,6 +1,5 @@
 body {
   margin: 0;
-  font: var(--agentic-font-size-body)/var(--agentic-line-height-body) var(--agentic-font-sans);
   color: var(--agentic-panel-foreground);
   background: var(--agentic-panel-background);
 }
