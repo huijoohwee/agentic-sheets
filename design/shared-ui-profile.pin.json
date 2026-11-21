@@ -65,7 +65,8 @@
   },
   "collectionLayoutStyles": {
     "sourcePath": "site/collection-layout.css",
-    "sha256": "sha256:46e6855129632a48e79188c2baf460358d8d59a7dfa1e775f900de2aee570bf8"
+    "sha256": "sha256:0dc572c92d998dcadf47a6d6a781400bcc7bb03f3b5b8b4805122ddaff824352",
+    "registryRevision": "5e3b04e8510d05923d43a0ebac40a583544ec857"
   },
   "panelSection": {
     "sourcePath": "site/panel-section.js",

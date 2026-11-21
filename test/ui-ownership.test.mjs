@@ -23,13 +23,14 @@ test('the editor uses the sealed owner styles and native named targets', async (
   }
   assert.match(actions, /<button(?=[^>]*id="mark-worksheet")(?=[^>]*aria-controls="grid-section")(?=[^>]*aria-pressed="false")[^>]*>Mark worksheet<\/button>/);
   assert.doesNotMatch(html, /data-agentic-annotation-target="true"/);
-  assert.match(html, /<section id="grid-section"[^>]*aria-label=/);
+  assert.match(html, /<section id="grid-section"[^>]*class="agentic-table-frame"[^>]*aria-label=/);
+  assert.match(html, /<table role="grid"[^>]*data-agentic-table-fit="container"/);
   assert.match(html, /<section id="snapshots"[^>]*aria-labelledby="snapshot-title"/);
 });
 
 test('workbook CSS reserves shared control styling and target geometry for the design system', async () => {
   const css = (await read('sheets/styles.css')).replace(/\/\*[\s\S]*?\*\//g, '').trim();
-  // The workbook owns table geometry and layout around the controls.
+  // The workbook owns cell geometry. The shared collection stylesheet sizes the grid and frame.
   // Shared components and their interaction states are styled by the two sealed projections.
   const layout = new Set(['display', 'grid-template-columns', 'justify-items', 'gap', 'margin', 'min-inline-size', 'inline-size', 'overflow-wrap']);
   const hosts = new Set(['#editor-fieldset', '#snapshots', '#cell-input', '#snapshot-title', '#workbook-details']);
