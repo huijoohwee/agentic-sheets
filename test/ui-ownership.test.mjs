@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { verifyUpstreamAssets } from '../scripts/check-design-upstream.mjs';
 
 const read = path => readFile(new URL('../' + path, import.meta.url), 'utf8');
 
@@ -85,4 +87,39 @@ test('the Functions tab and inline editor use their pinned implementations', asy
   assert.match(app, /item.className = 'agentic-collection-item'/);
   assert.ok((await read('sheets/dist/styles.css')).includes(await read('design/collection-layout.css')));
   assert.doesNotMatch(html + app, /<details|agentic-base-floating-panel|agentic-floating-panel-tab|role="tablist"/);
+});
+
+test('upstream verification proves vendored assets equal authentic owner bytes, rejecting forks and drift', () => {
+  const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+  const owner = 'github.com/huijoohwee/agentic-design-system';
+  const sourceBytes = Buffer.from('{"tokens":[]}\n');
+  const projectionBytes = Buffer.from(':root{--agentic-row-height:38px}\n');
+  const toolbarBytes = Buffer.from('.agentic-toolbar{}\n');
+  const layoutBytes = Buffer.from('.agentic-collection{}\n');
+  const rev = 'a'.repeat(40);
+  const layoutRev = 'b'.repeat(40);
+  const pin = {
+    profile: { owner, sourceRevision: rev, sourceSha256: `sha256:${sha(sourceBytes)}`, sourcePath: 'site/tokens/shared-ui-profile.json', registryRevision: rev, projectionSha256: `sha256:${sha(projectionBytes)}`, projectionPath: 'site/vendor/shared-ui-profile.css' },
+    toolbar: { sourcePath: 'site/toolbar.css', sha256: `sha256:${sha(toolbarBytes)}` },
+    collectionLayoutStyles: { sourcePath: 'site/collection-layout.css', sha256: `sha256:${sha(layoutBytes)}`, registryRevision: layoutRev },
+  };
+  const ownerStore = {
+    [`site/tokens/shared-ui-profile.json@${rev}`]: sourceBytes,
+    [`site/vendor/shared-ui-profile.css@${rev}`]: projectionBytes,
+    [`site/toolbar.css@${rev}`]: toolbarBytes,
+    [`site/collection-layout.css@${layoutRev}`]: layoutBytes,
+  };
+  const localStore = { 'shared-ui-profile.css': projectionBytes, 'toolbar.css': toolbarBytes, 'collection-layout.css': layoutBytes };
+  const ownerBlob = (path, revision) => { const bytes = ownerStore[`${path}@${revision}`]; if (!bytes) throw new Error(`missing owner blob ${path}@${revision}`); return bytes; };
+  const localAsset = name => { const bytes = localStore[name]; if (!bytes) throw new Error(`missing local ${name}`); return bytes; };
+  const verified = verifyUpstreamAssets({ pin, localAsset, ownerBlob });
+  assert.deepEqual(verified, ['shared-ui-profile.css', 'toolbar.css', 'collection-layout.css']);
+  // Forked local asset.
+  assert.throws(() => verifyUpstreamAssets({ pin, localAsset: name => name === 'toolbar.css' ? Buffer.from('fork') : localAsset(name), ownerBlob }), /vendored Design System asset differs/u);
+  // Drifted pin digest.
+  assert.throws(() => verifyUpstreamAssets({ pin: { ...pin, toolbar: { ...pin.toolbar, sha256: `sha256:${sha(Buffer.from('other'))}` } }, localAsset, ownerBlob }), /asset pin drift/u);
+  // Wrong owner.
+  assert.throws(() => verifyUpstreamAssets({ pin: { ...pin, profile: { ...pin.profile, owner: 'github.com/example/fork' } }, localAsset, ownerBlob }), /owner mismatch/u);
+  // Forked owner projection relative to the pin.
+  assert.throws(() => verifyUpstreamAssets({ pin, localAsset, ownerBlob: (path, revision) => path === 'site/vendor/shared-ui-profile.css' ? Buffer.from('fork') : ownerBlob(path, revision) }), /projection differs from pinned owner bytes/u);
 });
