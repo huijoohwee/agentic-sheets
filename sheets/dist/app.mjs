@@ -106,8 +106,8 @@ function rememberEditor(field) {
 }
 functionsTrigger.addEventListener('pointerdown', () => rememberEditor(document.activeElement));
 functionsTrigger.addEventListener('focus', event => rememberEditor(event.relatedTarget));
-functionsTrigger.addEventListener('blur', () => {
-  if (functionsTrigger.getAttribute('aria-expanded') === 'false') helpOrigin = null;
+functionsTrigger.addEventListener('blur', event => {
+  if (!$('workbook-panel').contains(event.relatedTarget)) helpOrigin = null;
 });
 function returnToDraft() {
   const origin = helpOrigin;

@@ -66,20 +66,20 @@ test('workbook CSS reserves shared control styling and target geometry for the d
 });
 
 test('the Functions tab and inline editor use their pinned implementations', async () => {
-  const [html, app, editor, panel, bundle, panelBundle, pinText] = await Promise.all([
+  const [html, app, editor, bundle, pinText] = await Promise.all([
     read('sheets/index.html'), read('sheets/app.mjs'), read('design/inline-editor.mjs'),
-    read('design/floating-panel.js'), read('sheets/dist/app.mjs'), read('sheets/dist/floating-panel.mjs'), read('design/shared-ui-profile.pin.json'),
+    read('sheets/dist/app.mjs'), read('design/shared-ui-profile.pin.json'),
   ]);
   const pin = JSON.parse(pinText);
   assert.equal(pin.inlineEditor.sourcePath, 'site/inline-editor.js');
   assert.equal(pin.floatingPanel.sourcePath, 'site/floating-panel.js');
   assert.ok(bundle.startsWith(editor));
-  assert.ok(panelBundle.includes(panel.slice(panel.indexOf('\n') + 1)));
   const binding = await read('sheets/workbook-panel.mjs');
-  for (const name of ['skills-commands', 'panel-section', 'collection-layout']) {
-    const owned = await read(`design/${name}.js`);
-    assert.ok(panelBundle.includes(owned.replace(/^(?:import [^\n]*\n)+/, '')), `${name} must use the pinned implementation`);
+  for (const name of ['floating-panel.js', 'toolbar-icons.js', 'icons.json', 'skills-commands.js', 'panel-section.js', 'collection-layout.js']) {
+    assert.equal(await read('sheets/dist/' + name), await read('design/' + name), name);
   }
+  const { openWorkbookTools } = await import('../sheets/dist/floating-panel.mjs');
+  assert.equal(typeof openWorkbookTools, 'function');
   assert.match(binding, /mountFloatingPanel\(trigger/);
   assert.match(binding, /mountSkillsCommandsReference\(/);
   assert.match(html, /data-panel-tab="functions" data-panel-label="Functions"/);

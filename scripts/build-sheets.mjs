@@ -48,30 +48,24 @@ export async function buildSheetsArtifact() {
     panelStyles.push(await ownedAsset(key, path.slice(5)), Buffer.from('\n'));
   }
   const editor = await ownedAsset('inlineEditor', 'inline-editor.mjs');
-  const panel = await ownedAsset('floatingPanel', 'floating-panel.js');
-  const sections = await ownedAsset('panelSection', 'panel-section.js');
-  const picker = await ownedAsset('collectionLayout', 'collection-layout.js');
-  const skills = await ownedAsset('skillsCommands', 'skills-commands.js');
+  // Keep each owner's private bindings in its own ESM scope, including when served offline.
+  for (const [key, name] of [
+    ['floatingPanel', 'floating-panel.js'], ['panelSection', 'panel-section.js'],
+    ['collectionLayout', 'collection-layout.js'], ['skillsCommands', 'skills-commands.js'],
+    ['panelControls', 'toolbar-icons.js'], ['icons', 'icons.json'],
+  ]) files.set(name, await ownedAsset(key, name));
   const workbookPanel = await input('sheets/workbook-panel.mjs');
   const catalog = JSON.parse(await input('sheets/invocation-catalog.json'));
   const osSpec = JSON.parse(await readFile(join(root, 'package.json'))).devDependencies['agentic-os'];
   if (osSpec !== 'github:' + catalog.owner + '#' + catalog.revision) throw new Error('Agentic OS catalog revision drift');
-  const controls = await ownedAsset('panelControls', 'toolbar-icons.js');
-  const icons = await ownedAsset('icons', 'icons.json');
   const notices = await ownedAsset('notices', 'THIRD-PARTY-NOTICES.txt');
   const app = afterImports(files.get('app.mjs'), "import { mountInlineEditor } from '../design/inline-editor.mjs';\n");
   const panelImport = "import('./workbook-panel.mjs')";
   if (!app.includes(panelImport)) throw new Error('Sheets must load the shared FloatingPanel');
   files.set('app.mjs', Buffer.concat([editor, Buffer.from('\n' + app.replace(panelImport, "import('./floating-panel.mjs')"))]));
   files.set('floating-panel.mjs', Buffer.from([
-    'const iconLibrary = ' + JSON.stringify(JSON.parse(icons)) + ';',
-    afterImports(controls, "import iconLibrary from './icons.json' with { type: 'json' }\n"),
-    afterImports(panel, "import { createDesignIcon, updatePanelControlGroup } from './toolbar-icons.js';\n"),
-    afterImports(sections, "import { createDesignIcon } from './toolbar-icons.js'\n"),
-    afterImports(picker, "import { createDesignIcon } from './toolbar-icons.js';\n"),
-    afterImports(skills, ["import { createDesignIcon } from './toolbar-icons.js';",
-      "import { PANEL_SECTION, createPanelSectionSummary, setPanelSectionExpanded } from './panel-section.js';",
-      "import { mountCollectionLayoutPicker } from './collection-layout.js';", ''].join('\n')),
+    "import { mountFloatingPanel } from './floating-panel.js';",
+    "import { mountSkillsCommandsReference } from './skills-commands.js';",
     'const catalog = ' + JSON.stringify({ entries: catalog.entries }) + ';',
     afterImports(workbookPanel, [
       "import { mountFloatingPanel } from '../design/floating-panel.js';",
