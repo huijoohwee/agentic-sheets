@@ -1,15 +1,15 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "3c83da8e84331052e5d6353792669818bbdf7c7dfc32697962ce03d1fa0b3ce9",
+  "sourceDigest": "0d31c2d267fb73582485236d6074eabe9d1fc089df8664b47d1a89a2dd318a51",
   "designSystem": {
-    "revision": "cb062fec5d0923f8da74a9fae3dcabb73e608aa1",
-    "profileSource": "0e1a21ff98a02604b7f733c6705380133c3d7d1c",
+    "revision": "d60b569179c23a14418616abc265d22f2da00e30",
+    "profileSource": "d60b569179c23a14418616abc265d22f2da00e30",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
-    "licenseSha256": "cb2ce512d6386bd2fc5ddb2d9dddce1e47b3549d3b1cc807e1697f56f29f699b"
+    "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "a2a9208158560ea63926b012dd92860211f63561da23578908f0643e36a6c514",
-  "totalBytes": 170126,
+  "artifactDigest": "26b526e3d55e57ba57979392ab3e0bed722da267316ff035b5424ef06c4b69e6",
+  "totalBytes": 172816,
   "inputs": [
     {
       "path": "design/collection-layout.css",
@@ -23,13 +23,13 @@
     },
     {
       "path": "design/floating-panel.css",
-      "bytes": 16086,
-      "sha256": "2dae95e94c582744f1b249ee7b3e2e2acf00454fb0254626a8b12aa995a276b8"
+      "bytes": 16518,
+      "sha256": "6f7c56b6b07a460c1b812460bcb8f3d8c18aa7bc3c783de402991cef4925fe8e"
     },
     {
       "path": "design/floating-panel.js",
-      "bytes": 6007,
-      "sha256": "7d6e1d91750534b4edeb75c65861b87df94c55587a3f4a9a74a0f0bb5c945670"
+      "bytes": 6880,
+      "sha256": "831f4ba466f40645fc58927798cba5ff579974945cdddee7e57c47382b0fefad"
     },
     {
       "path": "design/icons.json",
@@ -63,8 +63,8 @@
     },
     {
       "path": "design/shared-ui-profile.pin.json",
-      "bytes": 3305,
-      "sha256": "adc42bd7ef65aa7411a9fa2909725f2a8e388a01edda5514fc9403fc381cbd0a"
+      "bytes": 4189,
+      "sha256": "626e1c9af9e061d41e34472cb4a4399dc700611822116ed698680dd43e24b97f"
     },
     {
       "path": "design/skills-commands.css",
@@ -78,8 +78,8 @@
     },
     {
       "path": "design/THIRD-PARTY-NOTICES.txt",
-      "bytes": 5218,
-      "sha256": "958f1ada45cbc5a245d8fb45fb955e39923e0b921658c8ac682e6f38e11e0954"
+      "bytes": 6603,
+      "sha256": "846b24a7751584a4dada7d93f989df8f87885c536f84f1edf9edcddb92b6c67e"
     },
     {
       "path": "design/toolbar-icons.js",
@@ -185,8 +185,8 @@
     },
     {
       "path": "floating-panel.mjs",
-      "bytes": 51904,
-      "sha256": "5e85159dae2f3b318e5d7fd08ebf0b4ce02abef22280ec7e56b4649aa98530c2"
+      "bytes": 52777,
+      "sha256": "2fde2ebfccdda2d868625f0653f79335620dd6af4c54c8383cbbe47a1ba7623c"
     },
     {
       "path": "formula.mjs",
@@ -205,8 +205,8 @@
     },
     {
       "path": "LICENSE.design-system",
-      "bytes": 6491,
-      "sha256": "cb2ce512d6386bd2fc5ddb2d9dddce1e47b3549d3b1cc807e1697f56f29f699b"
+      "bytes": 7876,
+      "sha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
     },
     {
       "path": "manifest.webmanifest",
@@ -230,13 +230,13 @@
     },
     {
       "path": "styles.css",
-      "bytes": 31208,
-      "sha256": "9138f61524773d68bfed3a309a3ad7462bc6175aa515eedea793e97177dc32c9"
+      "bytes": 31640,
+      "sha256": "f4f5f1f4cb5ca68aebf9e9472c30fc544ffbf412c9ebeeb2b14ffd1a930d3319"
     },
     {
       "path": "sw.js",
       "bytes": 1309,
-      "sha256": "ae5b50af2c1a1e4971f8917a87321e06304939294dc3b8430bad005bbf58947e"
+      "sha256": "277e2d02e14a3636236ea27947b6f604a46ad50c33aae010bbbbd02e72787e5d"
     }
   ]
 }
