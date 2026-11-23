@@ -212,8 +212,8 @@ function buildGrid(rows, columns) {
   const grid = $('grid-section').querySelector('[role="grid"]');
   grid.setAttribute('aria-rowcount', String(rows + 1));
   grid.setAttribute('aria-colcount', String(columns + 1));
-  const header = document.createElement('tr'), corner = document.createElement('th'); corner.textContent = 'Cell'; header.append(corner);
-  for (let column = 0; column < columns; column++) { const th = document.createElement('th'); th.scope = 'col'; th.textContent = columnLabel(column); header.append(th); }
+  const header = document.createElement('tr'), corner = document.createElement('th'); corner.className = 'agentic-table-column-header'; corner.scope = 'col'; corner.textContent = 'Cell'; header.append(corner);
+  for (let column = 0; column < columns; column++) { const th = document.createElement('th'); th.scope = 'col'; th.className = 'agentic-table-column-header'; th.textContent = columnLabel(column); header.append(th); }
   $('column-head').append(header);
   for (let row = 0; row < rows; row++) {
     const tr = document.createElement('tr'), th = document.createElement('th'); th.scope = 'row'; th.textContent = String(row + 1); tr.append(th);
