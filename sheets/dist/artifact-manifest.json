@@ -1,20 +1,20 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "1f0489c65dfa0db98ec9874a58659762d16df55da8784764b4d98d2e163dda3c",
+  "sourceDigest": "40e738332d4c492b01ea7e17a26e6e91a2820ea89827f188b831c3aa07d1af8e",
   "designSystem": {
-    "revision": "d60b569179c23a14418616abc265d22f2da00e30",
-    "profileSource": "d60b569179c23a14418616abc265d22f2da00e30",
+    "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
+    "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "f83a48bc73adbb7b8eb1580f08fcc557afcb8536d4c37b0e411e5f1fce423235",
-  "totalBytes": 173952,
+  "artifactDigest": "03c60d0223618c6871ba7b6053f0efadf6961feebc9bfa4e5bee253725271b34",
+  "totalBytes": 174857,
   "inputs": [
     {
       "path": "design/collection-layout.css",
-      "bytes": 3777,
-      "sha256": "0dc572c92d998dcadf47a6d6a781400bcc7bb03f3b5b8b4805122ddaff824352"
+      "bytes": 4599,
+      "sha256": "c239fc3f40aa7998127cc66044ecb0d4c246600f89831fe9348761712693cfc1"
     },
     {
       "path": "design/collection-layout.js",
@@ -64,7 +64,7 @@
     {
       "path": "design/shared-ui-profile.pin.json",
       "bytes": 4189,
-      "sha256": "626e1c9af9e061d41e34472cb4a4399dc700611822116ed698680dd43e24b97f"
+      "sha256": "5f539d63c8755b642f4360efaef0fb482446685245af5fcf162ff0b04bf87896"
     },
     {
       "path": "design/skills-commands.css",
@@ -113,8 +113,8 @@
     },
     {
       "path": "sheets/app.mjs",
-      "bytes": 18390,
-      "sha256": "3473ebd4ae16dec70e0c26f8fc366822a4106ba9979facc9ca80d6bd9067341f"
+      "bytes": 18508,
+      "sha256": "7ebcd6433046c41754da765b9525e604b0901aef6be20dd85581c30e5800915e"
     },
     {
       "path": "sheets/core.mjs",
@@ -128,8 +128,8 @@
     },
     {
       "path": "sheets/index.html",
-      "bytes": 5605,
-      "sha256": "34c5c28f29c4372ab44bc389d0723d0521bed1609077280baaf46eba785ea232"
+      "bytes": 5643,
+      "sha256": "5b5eb83ef4e6b23340ef014fc31160cc182d1be86910dff7c530c5d059bf1902"
     },
     {
       "path": "sheets/invocation-catalog.json",
@@ -158,8 +158,8 @@
     },
     {
       "path": "sheets/styles.css",
-      "bytes": 1545,
-      "sha256": "62b9865d37d79fd8530c5ddd3a14dc956f0196aff4a117bfb2f7fa09fd70beb5"
+      "bytes": 1472,
+      "sha256": "a42e470eb7b6fb841fd2239e17e72de0c01b1722ed595799dc79f8b10c8f1ebe"
     },
     {
       "path": "sheets/sw.js",
@@ -175,8 +175,8 @@
   "files": [
     {
       "path": "app.mjs",
-      "bytes": 20218,
-      "sha256": "bd3b3943b69b2d7f7cc236082d3f8617a7a2ff90e41ba3a457ba0161038bdde9"
+      "bytes": 20336,
+      "sha256": "5bef6be29432824d25408cff2349a5de2bfa9abff081acf3a033a4c1f3b36d00"
     },
     {
       "path": "collection-layout.js",
@@ -210,8 +210,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5605,
-      "sha256": "34c5c28f29c4372ab44bc389d0723d0521bed1609077280baaf46eba785ea232"
+      "bytes": 5643,
+      "sha256": "5b5eb83ef4e6b23340ef014fc31160cc182d1be86910dff7c530c5d059bf1902"
     },
     {
       "path": "LICENSE",
@@ -255,13 +255,13 @@
     },
     {
       "path": "styles.css",
-      "bytes": 31640,
-      "sha256": "f4f5f1f4cb5ca68aebf9e9472c30fc544ffbf412c9ebeeb2b14ffd1a930d3319"
+      "bytes": 32389,
+      "sha256": "c7fc695233ee69eab9298295d5ea8ff35f182b985b15c41822c0b417f18127f1"
     },
     {
       "path": "sw.js",
       "bytes": 1436,
-      "sha256": "f1c77990dd8e48a5fc5a86bd86dbd69557afd1e959ef0088497599c036321069"
+      "sha256": "d11708e140e1ccb332d66ad468d3a8c89ec747aa65dd3ef16e7b7f87fa6d4759"
     },
     {
       "path": "toolbar-icons.js",

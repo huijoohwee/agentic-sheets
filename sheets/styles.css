@@ -33,8 +33,7 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-#grid-section th { text-align: start; background: var(--agentic-panel-background); }
-#grid-section thead th { position: sticky; inset-block-start: 0; z-index: 2; }
+#grid-section tbody th { text-align: start; background: var(--agentic-panel-background); }
 #grid-section tr > th:first-child { position: sticky; inset-inline-start: 0; min-inline-size: 3.25rem; inline-size: 3.25rem; z-index: 1; }
 #grid-section thead th:first-child { z-index: 3; }
 #grid-section td { cursor: cell; font-family: var(--agentic-font-mono); }

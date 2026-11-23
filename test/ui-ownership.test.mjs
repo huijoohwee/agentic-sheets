@@ -37,8 +37,8 @@ test('workbook CSS reserves shared control styling and target geometry for the d
   const layout = new Set(['display', 'grid-template-columns', 'justify-items', 'gap', 'margin', 'min-inline-size', 'inline-size', 'overflow-wrap']);
   const hosts = new Set(['#editor-fieldset', '#snapshots', '#cell-input', '#snapshot-title', '#workbook-details']);
   const grid = new Set([
-    '#grid-section', '#grid-section table', '#grid-section :is(th, td)', '#grid-section th',
-    '#grid-section thead th', '#grid-section tr > th:first-child', '#grid-section thead th:first-child',
+    '#grid-section', '#grid-section table', '#grid-section :is(th, td)', '#grid-section tbody th',
+    '#grid-section tr > th:first-child', '#grid-section thead th:first-child',
     '#grid-section td', '#grid-section td:is([data-kind="number"], [data-kind="formula"])', '#grid-section td[data-error]',
   ]);
   const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
