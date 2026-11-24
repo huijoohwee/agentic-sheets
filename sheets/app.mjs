@@ -6,12 +6,28 @@ const $ = id => document.getElementById(id);
 const store = createSheetsStore({ authorize: () => true }); // Local demo policy; not same-origin authentication.
 let workbook = null, selected = 'A1', dirty = false, busy = true, imported = null, importGeneration = 0;
 const cells = new Map();
+let recordBrowser, recordLoad, results = {};
+const browse = $('browse-cells'), recordHost = $('cell-records');
+browse.addEventListener('click', async () => {
+  recordHost.hidden = !recordHost.hidden;
+  browse.setAttribute('aria-expanded', String(!recordHost.hidden));
+  if (recordHost.hidden) return;
+  try {
+    recordLoad ??= import('./record-views.mjs').then(module => module.mountCellRecords(recordHost, address => {
+      if (select(address, true)) cells.get(address).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }));
+    recordBrowser = await recordLoad;
+    if (!recordHost.hidden) { recordBrowser.update(workbook?.cells ?? {}, results); recordHost.scrollIntoView({ block: 'nearest' }); }
+  } catch (failure) {
+    recordLoad = null; recordHost.hidden = true; browse.setAttribute('aria-expanded', 'false'); error(failure);
+  }
+});
 let inlineEditor = null, gridRows = 0, gridColumns = 0;
 const uuid = () => crypto.randomUUID();
 const error = value => { $('error').hidden = !value; $('error').textContent = value ? `${value.code ?? 'ERROR'}: ${value.message ?? value}` : ''; };
 function state() {
   $('sample').disabled = $('blank').disabled = busy || Boolean(workbook);
-  $('download').disabled = busy || !workbook;
+  browse.disabled = $('download').disabled = busy || !workbook;
   $('reload').disabled = busy;
   $('editor-fieldset').disabled = busy || !workbook;
   if (inlineEditor) inlineEditor.input.readOnly = busy;
@@ -150,7 +166,8 @@ function render() {
   const nextRows = fitsGrid(rows + 1, columns) ? rows + 1 : rows;
   const nextColumns = fitsGrid(rows, columns + 1) ? columns + 1 : columns;
   if (nextRows !== gridRows || nextColumns !== gridColumns) buildGrid(nextRows, nextColumns);
-  const results = workbook ? calculate(workbook) : {};
+  results = workbook ? calculate(workbook) : {};
+  if (!recordHost.hidden) recordBrowser?.update(workbook?.cells ?? {}, results);
   for (const [address, element] of cells) {
     const cell = workbook?.cells[address], result = results[address];
     const text = result?.error ? result.display : result?.value == null ? '' : String(result.value);

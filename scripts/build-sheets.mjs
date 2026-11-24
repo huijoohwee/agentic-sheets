@@ -1,10 +1,11 @@
+import { gunzipSync } from 'node:zlib';
 import { createHash } from 'node:crypto';
 import { readFile, readdir, mkdir, writeFile, rename } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('..', import.meta.url)), output = resolve(root, 'sheets/dist');
 const digest = value => createHash('sha256').update(value).digest('hex');
-const entries = ['index.html', 'app.mjs', 'styles.css', 'core.mjs', 'schema.mjs', 'formula.mjs', 'storage.mjs', 'manifest.webmanifest'];
+const entries = ['index.html', 'app.mjs', 'styles.css', 'record-views.mjs', 'core.mjs', 'schema.mjs', 'formula.mjs', 'storage.mjs', 'manifest.webmanifest'];
 export async function buildSheetsArtifact() {
   const files = new Map(), inputs = [];
   async function input(path) {
@@ -77,19 +78,32 @@ export async function buildSheetsArtifact() {
   files.set('LICENSE', await input('LICENSE'));
   const designLicense = Buffer.concat([await input('sheets/LICENSE.design-system'), Buffer.from('\n'), notices]);
   files.set('LICENSE.design-system', designLicense);
+  files.set('LICENSE.base', await input('design/base-views/LICENSE'));
+  const basePin = JSON.parse(await input('design/base-views/pin.json'));
+  const names = ['browser-data-view.js', 'browser-data-view.css'];
+  if (basePin.repository !== 'github.com/huijoohwee/agentic-base' || !/^[a-f0-9]{40}$/.test(basePin.revision))
+    throw new Error('Invalid record view owner');
+  const assets = [...files.keys(), 'artifact-manifest.json'].map(name => './' + name);
+  for (const name of names) {
+    const compressed = await input('design/base-views/' + name + '.gz');
+    const raw = gunzipSync(compressed, { maxOutputLength: 500000 });
+    if (digest(raw) !== basePin.files[name]) throw new Error('Base record view digest mismatch: ' + name);
+    files.set(name, raw); files.set(name + '.gz', compressed);
+  }
   const worker = await input('sheets/sw.js');
   inputs.sort((a, b) => a.path.localeCompare(b.path));
   const sourceDigest = digest(JSON.stringify(inputs));
-  const assets = [...files.keys(), 'artifact-manifest.json'].map(name => `./${name}`);
-  files.set('sw.js', Buffer.from(worker.toString().replace('__CACHE_REVISION__', sourceDigest.slice(0, 24)).replace('__ASSETS__', JSON.stringify(assets))));
+  files.set('sw.js', Buffer.from(worker.toString().replace('__CACHE_REVISION__', sourceDigest.slice(0, 24))
+    .replace('__ASSETS__', JSON.stringify(assets)).replace('__PACKED__', JSON.stringify(basePin.files))));
   const inventory = [...files].sort(([a], [b]) => a.localeCompare(b)).map(([path, bytes]) => ({ path, bytes: bytes.length, sha256: digest(bytes) }));
   for (const entry of inventory) if (!entry.bytes || entry.bytes >= 500000) throw new Error(`Artifact chunk cap: ${entry.path}`);
   const totalBytes = inventory.reduce((sum, entry) => sum + entry.bytes, 0);
-  if (totalBytes > 400000) throw new Error('Initial app exceeds 400,000 raw bytes');
+  const installAssetBytes = totalBytes - names.reduce((sum, name) => sum + files.get(name).length, 0);
   const artifact = { schema: 'sheets/artifact/v1', contract: 'sheets/workbook/v1', sourceDigest,
     designSystem: { revision: pin.profile.registryRevision, profileSource: pin.profile.sourceRevision, profileSha256: digest(profile), licenseSha256: digest(designLicense) },
-    artifactDigest: digest(JSON.stringify(inventory)), totalBytes, inputs, files: inventory };
+    artifactDigest: digest(JSON.stringify(inventory)), totalBytes, installAssetBytes, baseRevision: basePin.revision, inputs, files: inventory };
   files.set('artifact-manifest.json', Buffer.from(`${JSON.stringify(artifact, null, 2)}\n`));
+  if (installAssetBytes + files.get('artifact-manifest.json').length > 400000) throw new Error('Offline install exceeds 400,000 bytes');
   return { files, manifest: artifact };
 }
 async function main() {
