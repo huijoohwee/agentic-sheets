@@ -28,3 +28,21 @@ test('literals, unsupported calls, invalid ranges and oversized drafts do not ma
     assert.deepEqual(inspectFormulaDraft(draft), { references: [], functionName: null }, draft);
   }
 });
+
+test('accepted occurrences retain source spans while relationship endpoints use canonical cell IDs', async () => {
+  const { extractFormulaReferences, calculateWithReferences, executeWorkbook, CONTRACT } = await import('agentic-sheets');
+  const source = '=$a$2 + SUM($A2 : b$3) - A$2';
+  const refs = extractFormulaReferences(source);
+  assert.deepEqual(refs.map(({ kind, text, addresses }) => [kind, text, addresses]), [
+    ['cell', '$a$2', ['A2']], ['range', '$A2 : b$3', ['A2', 'B2', 'A3', 'B3']], ['cell', 'A$2', ['A2']],
+  ]);
+  for (const ref of refs) assert.equal(source.slice(ref.start, ref.end), ref.text);
+  assert.deepEqual(inspectFormulaDraft(source).references.map(r => r.addresses), refs.map(r => r.addresses));
+  const { workbook } = await executeWorkbook(null, { contract: CONTRACT, operationId: 'mixed-ref', operation: 'create',
+    expectedRevision: 0, payload: { workbookId: 'wb', sheetId: 'sheet', name: 'Budget',
+      cells: { C1: { type: 'formula', value: source }, B3: { type: 'number', value: 7 } } } });
+  const { results, links } = calculateWithReferences(workbook);
+  assert.equal(results.C1.value, 7);
+  assert.deepEqual(links.map(e => e.target).sort(), ['A2', 'A3', 'B2', 'B3']);
+  for (const bad of ['=A1+','=$$A1','=SUM($B2:$A1)','=Q$1','=A$0']) assert.throws(() => extractFormulaReferences(bad));
+});

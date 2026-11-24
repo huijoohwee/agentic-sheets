@@ -1,6 +1,6 @@
 import { CONTRACT, LIMITS, STARTER_GRID, SheetsError, requireValue, keys, identifier, coordinate, canonical, validateCell, validateWorkbook, decodeSnapshot } from './schema.mjs';
 import { calculate as calculateCells } from './formula.mjs';
-export { inspectFormulaDraft, listFunctions } from './formula.mjs';
+export { extractFormulaReferences, inspectFormulaDraft, listFunctions } from './formula.mjs';
 export { CONTRACT, LIMITS, SheetsError, validateWorkbook, decodeSnapshot };
 export function calculate(input) { return calculateCells(validateWorkbook(input)); }
 /** The formula compiler supplies each unique direct reference in the accepted workbook. */
