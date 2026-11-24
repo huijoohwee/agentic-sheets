@@ -1,0 +1,9 @@
+{
+  "repository": "github.com/huijoohwee/agentic-base",
+  "revision": "6d90bd812169bde115e3c927c0919d6bacfd8872",
+  "source": "packages/views-react/dist/",
+  "files": {
+    "browser-data-view.js": "d7e077e6a765fe0bb9453d94637717046d453b2ecd9b3c01cb6c5bf23a09ae31",
+    "browser-data-view.css": "bc1f7f82de43ef90214ad8d624653133068221cb259e36724699772fa36f64cb"
+  }
+}
