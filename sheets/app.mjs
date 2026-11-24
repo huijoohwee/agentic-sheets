@@ -1,12 +1,12 @@
 import { mountInlineEditor } from '../design/inline-editor.mjs';
-import { CONTRACT, LIMITS, calculate, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, listFunctions, sampleCells } from './core.mjs';
+import { CONTRACT, LIMITS, calculate, calculateWithReferences, decodeSnapshot, encodeSnapshot, inspectFormulaDraft, listFunctions, sampleCells } from './core.mjs';
 import { addressOf, columnLabel, fitsGrid, parseInput, inputOf } from './schema.mjs';
 import { createSheetsStore } from './storage.mjs';
 const $ = id => document.getElementById(id);
 const store = createSheetsStore({ authorize: () => true }); // Local demo policy; not same-origin authentication.
 let workbook = null, selected = 'A1', dirty = false, busy = true, imported = null, importGeneration = 0;
 const cells = new Map();
-let recordBrowser, recordLoad, results = {};
+let recordBrowser, recordLoad;
 const browse = $('browse-cells'), recordHost = $('cell-records');
 browse.addEventListener('click', async () => {
   recordHost.hidden = !recordHost.hidden;
@@ -17,7 +17,7 @@ browse.addEventListener('click', async () => {
       if (select(address, true)) cells.get(address).scrollIntoView({ block: 'nearest', inline: 'nearest' });
     }));
     recordBrowser = await recordLoad;
-    if (!recordHost.hidden) { recordBrowser.update(workbook?.cells ?? {}, results); recordHost.scrollIntoView({ block: 'nearest' }); }
+    if (!recordHost.hidden) { refreshResults(); recordHost.scrollIntoView({ block: 'nearest' }); }
   } catch (failure) {
     recordLoad = null; recordHost.hidden = true; browse.setAttribute('aria-expanded', 'false'); error(failure);
   }
@@ -159,6 +159,12 @@ function closeInlineEditor() {
   inlineEditor?.destroy();
   inlineEditor = null;
 }
+function refreshResults() {
+  if (recordHost.hidden || !recordBrowser) return workbook ? calculate(workbook) : {};
+  const { results, links } = workbook ? calculateWithReferences(workbook) : { results: {}, links: [] };
+  recordBrowser.update(workbook?.cells ?? {}, results, links, selected);
+  return results;
+}
 function render() {
   closeInlineEditor();
   const rows = workbook?.rows ?? 1, columns = workbook?.columns ?? 1;
@@ -166,8 +172,7 @@ function render() {
   const nextRows = fitsGrid(rows + 1, columns) ? rows + 1 : rows;
   const nextColumns = fitsGrid(rows, columns + 1) ? columns + 1 : columns;
   if (nextRows !== gridRows || nextColumns !== gridColumns) buildGrid(nextRows, nextColumns);
-  results = workbook ? calculate(workbook) : {};
-  if (!recordHost.hidden) recordBrowser?.update(workbook?.cells ?? {}, results);
+  const results = refreshResults();
   for (const [address, element] of cells) {
     const cell = workbook?.cells[address], result = results[address];
     const text = result?.error ? result.display : result?.value == null ? '' : String(result.value);
@@ -194,6 +199,7 @@ function select(address, focus = false) {
     markSelected(cells.get(selected), false);
     selected = address;
     markSelected(cells.get(selected), true);
+    if (!recordHost.hidden) recordBrowser?.select(selected);
     editor();
   }
   if (focus) cells.get(address).focus({ preventScroll: true });

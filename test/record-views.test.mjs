@@ -18,3 +18,19 @@ test('the installed workbook includes all three owner views within its transfer 
     assert.ok(files.get('sw.js').includes(manifest.files.find(file => file.path === name).sha256));
   }
 });
+
+test('public formula references preserve compiler semantics for blanks, repeated inputs, ranges and cycles', async () => {
+  const { executeWorkbook, calculateWithReferences, calculate, CONTRACT } = await import('agentic-sheets');
+  const formula = value => ({ type: 'formula', value });
+  const { workbook } = await executeWorkbook(null, {
+    contract: CONTRACT, operationId: 'op-links', operation: 'create', expectedRevision: 0,
+    payload: { workbookId: 'sample', sheetId: 'sheet', name: 'References',
+      cells: { A1: formula('=B1+B1'), B1: formula('=A1'), C1: formula('=SUM(A2:B2)'), D1: formula('=BAD(') } },
+  });
+  const { results, links } = calculateWithReferences(workbook);
+  assert.deepEqual(results, calculate(workbook));
+  assert.deepEqual(links, [
+    { source: 'A1', target: 'B1' }, { source: 'B1', target: 'A1' },
+    { source: 'C1', target: 'A2' }, { source: 'C1', target: 'B2' },
+  ]);
+});
