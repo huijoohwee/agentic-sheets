@@ -15,7 +15,7 @@ export function projectCells(cells, results) {
 }
 
 export async function mountCellRecords(host, activate) {
-  const { mountDataView, mountRecordViewToolbar } = await import('./browser-data-view.js');
+  const { createRecordRelation, mountDataView, mountRecordViewToolbar } = await import('./browser-data-view.js');
   const root = host.shadowRoot ?? host.attachShadow({ mode: 'open' });
   const css = document.createElement('link');
   css.rel = 'stylesheet'; css.href = new URL('./browser-data-view.css', import.meta.url).href;
@@ -23,9 +23,30 @@ export async function mountCellRecords(host, activate) {
   const ready = new Promise((resolve, reject) => {
     css.onload = resolve; css.onerror = () => reject(new Error('Workbook record styles could not load.'));
   });
-  root.replaceChildren(css, controls, content);
+  const references = document.createElement('nav');
+  references.setAttribute('aria-label', 'Cell references');
+  root.replaceChildren(css, controls, content, references);
   await ready;
   let layout = 'table', orientation = 'rows', offset = 0, rows = [], table, toolbar;
+  let relation, addresses, selected;
+  function renderReferences() {
+    references.replaceChildren();
+    if (!addresses.has(selected)) return;
+    function add(label, related) {
+      if (!related.length) return;
+      const group = document.createElement('p');
+      group.append(label + ' ' + selected + ' ');
+      for (const address of related) {
+        const button = document.createElement('button');
+        button.type = 'button'; button.textContent = address;
+        button.addEventListener('click', () => activate(address));
+        group.append(button, ' ');
+      }
+      references.append(group);
+    }
+    add('Inputs to', relation.from(selected).map(edge => edge.target));
+    add('Formulas using', relation.to(selected).map(edge => edge.source));
+  }
   const theme = matchMedia('(prefers-color-scheme: dark)');
   function applyTheme() {
     if (theme.matches) host.dataset.darkVariant = 'black'; else delete host.dataset.darkVariant;
@@ -40,12 +61,22 @@ export async function mountCellRecords(host, activate) {
       onLayoutChange(value) { layout = value; render(); } };
     if (toolbar) toolbar.update(tools); else toolbar = mountRecordViewToolbar(controls, tools);
     if (!page.length) { table?.destroy(); table = undefined; return; }
-    const view = { columns, rows: page, layout, ariaLabel: 'Populated worksheet cells', onActivateRow: activate,
+    const view = { columns, rows: page, layout, selectedRowId: page.some(row => row.id === selected) ? selected : null, ariaLabel: 'Populated worksheet cells', onActivateRow: activate,
       ...(layout === 'kanban' ? { groupByColumnId: 'kind' } : {}),
       ...(layout === 'multiDimensional' ? { orientation, onOrientationChange(value) { orientation = value; render(); } } : {}) };
     if (table) table.update(view); else table = mountDataView(content, view);
   }
-  return { update(cells, results) {
-    rows = projectCells(cells, results); offset = Math.min(offset, Math.max(0, Math.floor((rows.length - 1) / pageSize) * pageSize)); render();
+  function select(address) {
+    const index = rows.findIndex(row => row.id === address);
+    if (index >= 0 && selected !== address) offset = Math.floor(index / pageSize) * pageSize;
+    selected = address;
+    render(); renderReferences();
+  }
+  return { select, update(cells, results, links, address) {
+    rows = projectCells(cells, results);
+    addresses = new Set([...Object.keys(cells), ...links.map(edge => edge.target)]);
+    relation = createRecordRelation({ sources: addresses, targets: addresses, links });
+    offset = Math.min(offset, Math.max(0, Math.floor((rows.length - 1) / pageSize) * pageSize));
+    select(address);
   } };
 }

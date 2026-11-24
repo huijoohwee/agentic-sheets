@@ -118,7 +118,7 @@ export function compileFormula(source, bounds = STARTER_GRID) {
   if (index !== tokens.length) problem('PARSE');
   return { node, dependencies };
 }
-export function calculate(workbook) {
+export function calculate(workbook, visitDependencies) {
   const compiled = new Map(), results = {}, visiting = new Set();
   let edges = 0, steps = 0;
   for (const [address, cell] of Object.entries(workbook.cells)) {
@@ -172,5 +172,10 @@ export function calculate(workbook) {
     return result;
   }
   for (const address of Object.keys(workbook.cells).sort()) results[address] = cellResult(address);
+  if (visitDependencies) {
+    for (const [address, code] of compiled) {
+      if (code.dependencies) visitDependencies(address, code.dependencies);
+    }
+  }
   return results;
 }
