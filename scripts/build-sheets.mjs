@@ -43,10 +43,19 @@ export async function buildSheetsArtifact() {
   if (imports.shift() !== pin.profile.projectionPath || new Set(imports).size !== imports.length)
     throw new Error('Invalid Design System panel stylesheet order');
   const panelStyles = [];
+  const includedStyles = new Set([pin.profile.projectionPath]);
   for (const path of imports) {
     const key = cssSources.get(path);
     if (!key) throw new Error('Unpinned Design System stylesheet: ' + path);
-    panelStyles.push(await ownedAsset(key, path.slice(5)), Buffer.from('\n'));
+    const css = (await ownedAsset(key, path.slice(5))).toString();
+    // The offline entry already includes earlier dependencies in cascade order.
+    const sealed = css.replace(/^@import "\.\/([\w/-]+\.css)";\s*/gmu, (_, source) => {
+      if (!includedStyles.has('site/' + source)) throw new Error('Unresolved stylesheet dependency: ' + source);
+      return '';
+    });
+    if (/@import\b/u.test(sealed)) throw new Error('Unexpected stylesheet import in ' + path);
+    panelStyles.push(Buffer.from(sealed), Buffer.from('\n'));
+    includedStyles.add(path);
   }
   const editor = await ownedAsset('inlineEditor', 'inline-editor.mjs');
   // Keep each owner's private bindings in its own ESM scope, including when served offline.

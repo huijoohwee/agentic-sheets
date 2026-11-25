@@ -10,7 +10,9 @@ test('the editor uses the sealed owner styles and native named targets', async (
   const [html, toolbar, panel, sheet, sealed] = await Promise.all([
     read('sheets/index.html'), read('design/toolbar.css'), read('design/floating-panel.css'), read('sheets/styles.css'), read('sheets/dist/styles.css'),
   ]);
-  assert.equal(sealed, [toolbar, panel, await read('design/panel-section.css'), await read('design/collection-layout.css'), await read('design/skills-commands.css'), sheet].join('\n'));
+  const collection = (await read('design/collection-layout.css')).replace(/^@import "\.\/toolbar\.css";\s*/u, '');
+  assert.doesNotMatch(sealed, /@import\b/u);
+  assert.equal(sealed, [toolbar, panel, await read('design/panel-section.css'), collection, await read('design/skills-commands.css'), sheet].join('\n'));
   assert.deepEqual([...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map(match => match[1]),
     ['./shared-ui-profile.css', './styles.css']);
   assert.doesNotMatch(html, /<style\b|\sstyle\s*=/i);
@@ -85,7 +87,7 @@ test('the Functions tab and inline editor use their pinned implementations', asy
   assert.match(html, /data-panel-tab="functions" data-panel-label="Functions"/);
   assert.match(html, /id="function-list" class="agentic-collection" data-layout="list"/);
   assert.match(app, /item.className = 'agentic-collection-item'/);
-  assert.ok((await read('sheets/dist/styles.css')).includes(await read('design/collection-layout.css')));
+  assert.ok((await read('sheets/dist/styles.css')).includes((await read('design/collection-layout.css')).replace(/^@import "\.\/toolbar\.css";\s*/u, '')));
   assert.doesNotMatch(html + app, /<details|agentic-base-floating-panel|agentic-floating-panel-tab|role="tablist"/);
 });
 
