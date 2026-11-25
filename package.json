@@ -24,6 +24,7 @@
     "land": "agentic-os land"
   },
   "devDependencies": {
-    "agentic-os": "github:huijoohwee/agentic-os#d3430c8da71b0128b644040bfd1ef32d9f36c50e"
+    "agentic-gateway": "https://codeload.github.com/huijoohwee/agentic-gateway/tar.gz/cdb000925729a729732206a32de36e6bc7db011c",
+    "agentic-os": "github:huijoohwee/agentic-os#b9b13e19b16f0b55eb169fa4bfaa1cfce4241d75"
   }
 }

@@ -1,8 +1,8 @@
 {
   "owner": "huijoohwee/agentic-os",
-  "revision": "d3430c8da71b0128b644040bfd1ef32d9f36c50e",
+  "revision": "b9b13e19b16f0b55eb169fa4bfaa1cfce4241d75",
   "path": "catalog/invocation.json",
-  "sourceSha256": "sha256:424245a33605c7ff9923c4707da4ffa24e631d3ff892d6fd28081a487a2c7bf0",
+  "sourceSha256": "sha256:3233f8d61a3fbe49c4f10b461e77e1ef72d3e68aeed2ff39a7d75872c4ebcce7",
   "entries": [
     {
       "token": "/setup",
@@ -255,6 +255,27 @@
       "subject": "Command",
       "verb": "design-check",
       "object": "input"
+    },
+    {
+      "token": "/skill.discover",
+      "summary": "Read pinned portable skill metadata offline.",
+      "subject": "Command",
+      "verb": "skill",
+      "object": "skill"
+    },
+    {
+      "token": "/skill.load",
+      "summary": "Read the verified portable skill instructions offline.",
+      "subject": "Command",
+      "verb": "skill",
+      "object": "skill"
+    },
+    {
+      "token": "@skill:",
+      "summary": "Select a portable skill by its published identity.",
+      "subject": "Binding",
+      "verb": "Unspecified",
+      "object": "skill"
     }
   ]
 }
