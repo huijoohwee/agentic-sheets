@@ -15,4 +15,36 @@ jobs:
         with:
           node-version: '22'
           package-manager-cache: false
+      - name: Enforce shared owner reuse
+        uses: huijoohwee/agentic-os/.github/actions/owner-reuse@d2accfda2bbf1f96175267d2ae2bf9be596801c6
+        with:
+          baseline: 87a0f0f95f1fc08a5db4871e49005da351b96e61
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: huijoohwee/agentic-design-system
+          ref: main
+          path: .owners/agentic-design-system
+          fetch-depth: 0
+          persist-credentials: false
+          sparse-checkout: site
+      - run: node scripts/check-design-upstream.mjs .owners
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: huijoohwee/agentic-base
+          ref: main
+          path: .owners/agentic-base
+          fetch-depth: 0
+          persist-credentials: false
+          sparse-checkout: packages/views-react/dist
+      - name: Verify offline Base browser projections
+        shell: bash
+        run: |
+          set -euo pipefail
+          revision=$(jq -er '.revision | select(test("^[a-f0-9]{40}$"))' design/base-views/pin.json)
+          git -C .owners/agentic-base merge-base --is-ancestor "$revision" HEAD
+          for name in browser-data-view.js browser-data-view.css; do
+            git -C .owners/agentic-base show "$revision:packages/views-react/dist/$name" > "$RUNNER_TEMP/$name"
+            gzip -dc "design/base-views/$name.gz" | cmp - "$RUNNER_TEMP/$name"
+          done
       - run: npm test

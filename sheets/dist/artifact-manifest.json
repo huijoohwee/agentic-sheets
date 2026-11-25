@@ -1,16 +1,16 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "f4373efe27ec90028ce2c92186730933f6369fad3dc132e1eae085fee1a3c6df",
+  "sourceDigest": "df5d7f9765a1c2a8404af6e4b9e842f95a6fb28867b9ed4b92c6a56b23272e62",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "9fe38e7aafd019e0fb11f792f35c031604e8f5b9589c7df6fd04c7444bf0cf02",
-  "totalBytes": 760682,
-  "installAssetBytes": 312433,
+  "artifactDigest": "4311dab1e6cdafec33eaffe22fb7559ba000fb5fe6b8c736256fa576f8f02702",
+  "totalBytes": 761103,
+  "installAssetBytes": 312854,
   "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
   "inputs": [
     {
@@ -120,13 +120,13 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 1201,
-      "sha256": "bd3a0058e492738a066af048536e321c119c40e5fcd9b96a555c8be13b74cc42"
+      "bytes": 1745,
+      "sha256": "769e3837413f8e2aa3855b5a7860780d303371d043a9c6d5ebd563a3ff588911"
     },
     {
       "path": "package.json",
-      "bytes": 792,
-      "sha256": "cb586d1b65ba9640244b6720e0aff6f2792832f692edd7328844a6494e33bd76"
+      "bytes": 921,
+      "sha256": "944dde71843a513915dec602bfa3a752a059b086fa027efa38343cd5a0f96ff4"
     },
     {
       "path": "scripts/build-sheets.mjs",
@@ -155,8 +155,8 @@
     },
     {
       "path": "sheets/invocation-catalog.json",
-      "bytes": 7437,
-      "sha256": "85116977c7737193f43403f0a67665070f958b9fc7a316266c00709ada3885da"
+      "bytes": 8008,
+      "sha256": "ab35d371c4f57d161210419306b4a745591659cc0cd05e1c7ed26d56e4e57f8e"
     },
     {
       "path": "sheets/LICENSE.design-system",
@@ -242,8 +242,8 @@
     },
     {
       "path": "floating-panel.mjs",
-      "bytes": 5914,
-      "sha256": "8e0f4ac3aab082620b37b3837142aed863e64dde5438f250c49219e77768753d"
+      "bytes": 6335,
+      "sha256": "2e00ae8d2a49c5ffe573a4ed3b4e97ec92ea0b718c9e544aa17b8512dfcf712e"
     },
     {
       "path": "formula.mjs",
@@ -318,7 +318,7 @@
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "3005b9043834791e041ec24460aeac8bd944a5bd70003df2b25abd01ef3a6e85"
+      "sha256": "c344b079295cf3cc85948547b57ebba72f095a96b059751e6f5279d3efffcfc8"
     },
     {
       "path": "toolbar-icons.js",
