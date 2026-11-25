@@ -29,8 +29,8 @@
   },
   "toolbar": {
     "sourcePath": "site/toolbar.css",
-    "sha256": "sha256:6b286c1a9877a981d5ab8bf8a6a0072165b968545fbf6938ffaf9499531cc729",
-    "registryRevision": "690c1f104a4527605723c04ac6635248c94e4a86"
+    "sha256": "sha256:87c119df303bb671b48686939df107a96e29c4036b9d2e1ca27126445d9bc810",
+    "registryRevision": "935e15d37cfb16e28d0c477d178ba155fdc77013"
   },
   "inlineEditor": {
     "sourcePath": "site/inline-editor.js",
@@ -74,8 +74,8 @@
   },
   "collectionLayoutStyles": {
     "sourcePath": "site/collection-layout.css",
-    "sha256": "sha256:c239fc3f40aa7998127cc66044ecb0d4c246600f89831fe9348761712693cfc1",
-    "registryRevision": "690c1f104a4527605723c04ac6635248c94e4a86"
+    "sha256": "sha256:425c67ffb1b0b09286512d5998ee791f75b3e355f00cdd7a8c77dd7d1633a36a",
+    "registryRevision": "935e15d37cfb16e28d0c477d178ba155fdc77013"
   },
   "panelSection": {
     "sourcePath": "site/panel-section.js",

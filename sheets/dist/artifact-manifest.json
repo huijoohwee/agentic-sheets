@@ -1,27 +1,27 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "799f276a7a9a6bda0b3e5aae616cba3874e973b02878837165634d65159b4b19",
+  "sourceDigest": "f4373efe27ec90028ce2c92186730933f6369fad3dc132e1eae085fee1a3c6df",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "93f91dbf97a971c955c7194f1b817ed0238d355ce0c470592e04f5b9dfcd96c8",
-  "totalBytes": 752770,
-  "installAssetBytes": 311056,
-  "baseRevision": "f1cabbb3a576bbfd22e44d9837ab284fbb8cbe69",
+  "artifactDigest": "9fe38e7aafd019e0fb11f792f35c031604e8f5b9589c7df6fd04c7444bf0cf02",
+  "totalBytes": 760682,
+  "installAssetBytes": 312433,
+  "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
   "inputs": [
     {
       "path": "design/base-views/browser-data-view.css.gz",
-      "bytes": 8992,
-      "sha256": "36c5a28fd8639582ae71eb956d45dd389319ece552efce2c5247c220fbf8a0c2"
+      "bytes": 9602,
+      "sha256": "944d3169c002de4a86c329e99c24a709c00f0370ed934929c68f7726c29ee37a"
     },
     {
       "path": "design/base-views/browser-data-view.js.gz",
-      "bytes": 117187,
-      "sha256": "433a6fcdb3772c9871608a9f44feac30ddc60ecfb60519f15e74709b05c30f30"
+      "bytes": 117723,
+      "sha256": "7920c00d4f1b181a9ceb3915ec9490056312a44371c1b7743ea1174f1f87c6a9"
     },
     {
       "path": "design/base-views/LICENSE",
@@ -31,12 +31,12 @@
     {
       "path": "design/base-views/pin.json",
       "bytes": 367,
-      "sha256": "2e195a29d030dfc51cb8b79b49ede3efe39fb4b3fb1c18ee078c17bf4c39e6d4"
+      "sha256": "b511f01884d77240d44f55ac59031891ec53a8d408482053d5f47667a404cd8a"
     },
     {
       "path": "design/collection-layout.css",
-      "bytes": 4599,
-      "sha256": "c239fc3f40aa7998127cc66044ecb0d4c246600f89831fe9348761712693cfc1"
+      "bytes": 4842,
+      "sha256": "425c67ffb1b0b09286512d5998ee791f75b3e355f00cdd7a8c77dd7d1633a36a"
     },
     {
       "path": "design/collection-layout.js",
@@ -86,7 +86,7 @@
     {
       "path": "design/shared-ui-profile.pin.json",
       "bytes": 4189,
-      "sha256": "5f539d63c8755b642f4360efaef0fb482446685245af5fcf162ff0b04bf87896"
+      "sha256": "df95cdb8b540327a2818ff9d1b58e9011bdfa11538f80a8b0cdac8ef8c7e6a5d"
     },
     {
       "path": "design/skills-commands.css",
@@ -110,8 +110,8 @@
     },
     {
       "path": "design/toolbar.css",
-      "bytes": 3960,
-      "sha256": "6b286c1a9877a981d5ab8bf8a6a0072165b968545fbf6938ffaf9499531cc729"
+      "bytes": 3974,
+      "sha256": "87c119df303bb671b48686939df107a96e29c4036b9d2e1ca27126445d9bc810"
     },
     {
       "path": "LICENSE",
@@ -130,8 +130,8 @@
     },
     {
       "path": "scripts/build-sheets.mjs",
-      "bytes": 8784,
-      "sha256": "de08a75eac53a5221ab0f01fc99e8c390815244dea956b43be96b51cac6db152"
+      "bytes": 9330,
+      "sha256": "9fa06e40d8f33f9fcb94bb28a2500a6efd7889b1aed633e2138079e4400e14d7"
     },
     {
       "path": "sheets/app.mjs",
@@ -207,23 +207,23 @@
     },
     {
       "path": "browser-data-view.css",
-      "bytes": 51129,
-      "sha256": "4877d86e6b4fbdef93af2f2d6b17295dfa72ac9ef25b45441473d7465254b077"
+      "bytes": 55511,
+      "sha256": "57218f6fd311491d4a8614716542825689f373932fa69b89dbcc8a7f9c607f85"
     },
     {
       "path": "browser-data-view.css.gz",
-      "bytes": 8992,
-      "sha256": "36c5a28fd8639582ae71eb956d45dd389319ece552efce2c5247c220fbf8a0c2"
+      "bytes": 9602,
+      "sha256": "944d3169c002de4a86c329e99c24a709c00f0370ed934929c68f7726c29ee37a"
     },
     {
       "path": "browser-data-view.js",
-      "bytes": 390585,
-      "sha256": "af26f53f4c65b79132d6b43c2c4579e5fae22123f574b7fba34685400b3214b7"
+      "bytes": 392738,
+      "sha256": "f0c90cd00f262b9ea72ccf15beda01fe1ff63ca8d8d41f98c9eb4d581ccace0b"
     },
     {
       "path": "browser-data-view.js.gz",
-      "bytes": 117187,
-      "sha256": "433a6fcdb3772c9871608a9f44feac30ddc60ecfb60519f15e74709b05c30f30"
+      "bytes": 117723,
+      "sha256": "7920c00d4f1b181a9ceb3915ec9490056312a44371c1b7743ea1174f1f87c6a9"
     },
     {
       "path": "collection-layout.js",
@@ -312,13 +312,13 @@
     },
     {
       "path": "styles.css",
-      "bytes": 32389,
-      "sha256": "c7fc695233ee69eab9298295d5ea8ff35f182b985b15c41822c0b417f18127f1"
+      "bytes": 32620,
+      "sha256": "db4a642cdc4b9494685016dadb8fc284e2b72084e4b5faa7df97e8f4c3ab28b8"
     },
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "0f2ca48a0a01aa9f02abce816cc8097b7d60dda0ec469ff7aee76926963aa788"
+      "sha256": "3005b9043834791e041ec24460aeac8bd944a5bd70003df2b25abd01ef3a6e85"
     },
     {
       "path": "toolbar-icons.js",
