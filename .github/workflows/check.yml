@@ -16,7 +16,7 @@ jobs:
           node-version: '22'
           package-manager-cache: false
       - name: Enforce shared owner reuse
-        uses: huijoohwee/agentic-os/.github/actions/owner-reuse@2a394c589064105387f1c58e6db54da135059c28
+        uses: huijoohwee/agentic-os/.github/actions/owner-reuse@b4471443ad25e100a41c9ac0a7c655a1f1d24beb
         with:
           baseline: 87a0f0f95f1fc08a5db4871e49005da351b96e61
       - run: npm ci --ignore-scripts --no-audit --no-fund

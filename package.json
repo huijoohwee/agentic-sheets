@@ -30,7 +30,7 @@
   "devDependencies": {
     "agentic-design-system": "github:huijoohwee/agentic-design-system#8693ed5ac9a78086bd26cf412e2e734afebb24cb",
     "agentic-gateway": "https://codeload.github.com/huijoohwee/agentic-gateway/tar.gz/cdb000925729a729732206a32de36e6bc7db011c",
-    "agentic-os": "github:huijoohwee/agentic-os#b9b13e19b16f0b55eb169fa4bfaa1cfce4241d75",
+    "agentic-os": "https://codeload.github.com/huijoohwee/agentic-os/tar.gz/3e35cdc1ccc7d294b142f3fc35e2d7cb21be8497",
     "playwright": "1.62.1"
   }
 }
