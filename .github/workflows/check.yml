@@ -8,7 +8,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
@@ -20,6 +20,8 @@ jobs:
         with:
           baseline: 87a0f0f95f1fc08a5db4871e49005da351b96e61
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Install Chromium for rendered target audit
+        run: npx playwright install --with-deps chromium
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: huijoohwee/agentic-design-system

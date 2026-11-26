@@ -1,4 +1,4 @@
-const CACHE = 'agentic-sheets-static-df5d7f9765a1c2a8404af6e4';
+const CACHE = 'agentic-sheets-static-f3edba7478be59e5171770d4';
 const ASSETS = ["./index.html","./app.mjs","./styles.css","./record-views.mjs","./core.mjs","./schema.mjs","./formula.mjs","./storage.mjs","./manifest.webmanifest","./shared-ui-profile.css","./floating-panel.js","./panel-section.js","./collection-layout.js","./skills-commands.js","./toolbar-icons.js","./icons.json","./floating-panel.mjs","./LICENSE","./LICENSE.design-system","./LICENSE.base","./artifact-manifest.json"];
 const PACKED = {"browser-data-view.js":"f0c90cd00f262b9ea72ccf15beda01fe1ff63ca8d8d41f98c9eb4d581ccace0b","browser-data-view.css":"57218f6fd311491d4a8614716542825689f373932fa69b89dbcc8a7f9c607f85"};
 const scope = new URL(self.registration.scope);

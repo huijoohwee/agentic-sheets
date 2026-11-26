@@ -1,16 +1,16 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "df5d7f9765a1c2a8404af6e4b9e842f95a6fb28867b9ed4b92c6a56b23272e62",
+  "sourceDigest": "f3edba7478be59e5171770d4439f6b88cb71ebf74ff7100caeca7428926c4184",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "4311dab1e6cdafec33eaffe22fb7559ba000fb5fe6b8c736256fa576f8f02702",
-  "totalBytes": 761103,
-  "installAssetBytes": 312854,
+  "artifactDigest": "45b7acf4fc2ea950672cac3407d09ac8caed0f1354e9d30896ad1c543295c797",
+  "totalBytes": 761223,
+  "installAssetBytes": 312974,
   "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
   "inputs": [
     {
@@ -120,13 +120,13 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 1745,
-      "sha256": "769e3837413f8e2aa3855b5a7860780d303371d043a9c6d5ebd563a3ff588911"
+      "bytes": 4012,
+      "sha256": "b41e6877f6a8eeaa08eee8a00554e62de47dc4561469693b35179f1656912932"
     },
     {
       "path": "package.json",
-      "bytes": 921,
-      "sha256": "944dde71843a513915dec602bfa3a752a059b086fa027efa38343cd5a0f96ff4"
+      "bytes": 1318,
+      "sha256": "481506549364ef88c666f5535a726c571c4031b6dd4acd33a5c1cad3dc88b002"
     },
     {
       "path": "scripts/build-sheets.mjs",
@@ -150,8 +150,8 @@
     },
     {
       "path": "sheets/index.html",
-      "bytes": 5897,
-      "sha256": "e9dbea65d3d4d830dc912700d467608d880b89860b616a481d7bc9e8d2601817"
+      "bytes": 6017,
+      "sha256": "9656e0a4fd975a21c766b672bf01c4610a42de24c04bca83c205b73d7c1699ab"
     },
     {
       "path": "sheets/invocation-catalog.json",
@@ -257,8 +257,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 5897,
-      "sha256": "e9dbea65d3d4d830dc912700d467608d880b89860b616a481d7bc9e8d2601817"
+      "bytes": 6017,
+      "sha256": "9656e0a4fd975a21c766b672bf01c4610a42de24c04bca83c205b73d7c1699ab"
     },
     {
       "path": "LICENSE",
@@ -318,7 +318,7 @@
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "c344b079295cf3cc85948547b57ebba72f095a96b059751e6f5279d3efffcfc8"
+      "sha256": "67257bdb6a41f6faca86c66bacd022fcd7f2e2a090ece06588b92bcda59ebe0b"
     },
     {
       "path": "toolbar-icons.js",

@@ -17,9 +17,10 @@ test('the editor uses the sealed owner styles and native named targets', async (
     ['./shared-ui-profile.css', './styles.css']);
   assert.doesNotMatch(html, /<style\b|\sstyle\s*=/i);
   assert.match(html, /<body data-agentic-typography\b/);
+  assert.match(html, /<main(?=[^>]*id="workbook")(?=[^>]*aria-labelledby="workbook-title")(?=[^>]*data-selection-target="workbook-editor")[^>]*>/);
   assert.match(html, /<label class="agentic-fact-label" for="cell-input">/);
   const actions = html.match(/<nav\b[^>]*id="workbook-actions"[^>]*>[\s\S]*?<\/nav>/)?.[0];
-  assert.match(actions, /class="agentic-toolbar" data-scroll aria-label=/);
+  assert.match(actions, /class="agentic-toolbar" data-scroll aria-label="Workbook actions" data-selection-target="workbook-actions"/);
   for (const [tag] of html.matchAll(/<button\b[^>]*>/g)) {
     const owner = actions.includes(tag) ? 'agentic-toolbar-item' : 'agentic-form-control';
     assert.ok(tag.includes('class="' + owner + '"'), tag);
@@ -27,7 +28,7 @@ test('the editor uses the sealed owner styles and native named targets', async (
   }
   assert.match(actions, /<button(?=[^>]*id="mark-worksheet")(?=[^>]*aria-controls="grid-section")(?=[^>]*aria-pressed="false")[^>]*>Mark worksheet<\/button>/);
   assert.doesNotMatch(html, /data-agentic-annotation-target="true"/);
-  assert.match(html, /<section id="grid-section"[^>]*class="agentic-table-frame"[^>]*aria-label=/);
+  assert.match(html, /<section(?=[^>]*id="grid-section")(?=[^>]*class="agentic-table-frame")(?=[^>]*aria-label="Scrollable workbook grid")(?=[^>]*data-selection-target="worksheet-grid")[^>]*>/);
   assert.match(html, /<table role="grid"[^>]*data-agentic-table-fit="container"/);
   assert.match(html, /<section id="snapshots"[^>]*aria-labelledby="snapshot-title"/);
 });
