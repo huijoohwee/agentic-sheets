@@ -1,14 +1,14 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "ed33e8c014b8e396ab4fc712260624c411b1e0a90362c2d8259cd19f228cdd7b",
+  "sourceDigest": "f3edba7478be59e5171770d4439f6b88cb71ebf74ff7100caeca7428926c4184",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "55cb04ae56ee4ee487d7c311e0a3b2f0d40593a4b70f239cea2da53e8c9fae98",
+  "artifactDigest": "45b7acf4fc2ea950672cac3407d09ac8caed0f1354e9d30896ad1c543295c797",
   "totalBytes": 761223,
   "installAssetBytes": 312974,
   "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
@@ -125,8 +125,8 @@
     },
     {
       "path": "package.json",
-      "bytes": 1175,
-      "sha256": "d3842b74b60737d66130901f227a16c23a9c6c6330e2f124bcc468758cadf1d2"
+      "bytes": 1318,
+      "sha256": "481506549364ef88c666f5535a726c571c4031b6dd4acd33a5c1cad3dc88b002"
     },
     {
       "path": "scripts/build-sheets.mjs",
@@ -318,7 +318,7 @@
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "acc25e57e5417d492bb64ce86abcc6a1ae2ea694c638d038ad65e7b8b07e6faf"
+      "sha256": "67257bdb6a41f6faca86c66bacd022fcd7f2e2a090ece06588b92bcda59ebe0b"
     },
     {
       "path": "toolbar-icons.js",
