@@ -16,7 +16,8 @@
     "dev:sheets": "npm run dev",
     "build:sheets": "node scripts/build-sheets.mjs --write",
     "check:sheets": "node --test && node scripts/build-sheets.mjs --check",
-    "check": "npm run check:sheets",
+    "check:annotation-targets": "node scripts/check-annotation-targets.mjs",
+    "check": "npm run check:sheets && npm run check:annotation-targets",
     "test": "npm run check",
     "setup": "agentic-os setup",
     "doctor": "agentic-os doctor",
@@ -24,7 +25,9 @@
     "land": "agentic-os land"
   },
   "devDependencies": {
+    "agentic-design-system": "github:huijoohwee/agentic-design-system#77dd319c0b91104464c121de93f09ebe58358c82",
     "agentic-gateway": "https://codeload.github.com/huijoohwee/agentic-gateway/tar.gz/cdb000925729a729732206a32de36e6bc7db011c",
-    "agentic-os": "github:huijoohwee/agentic-os#b9b13e19b16f0b55eb169fa4bfaa1cfce4241d75"
+    "agentic-os": "github:huijoohwee/agentic-os#b9b13e19b16f0b55eb169fa4bfaa1cfce4241d75",
+    "playwright": "1.62.1"
   }
 }
