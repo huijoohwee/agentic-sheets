@@ -1,14 +1,14 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "103169cd577916d3ea03796728d32d864771b36052346287de48d9e7c7cbad9d",
+  "sourceDigest": "ed33e8c014b8e396ab4fc712260624c411b1e0a90362c2d8259cd19f228cdd7b",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "18ba29e3a9ca9a35c1e1db2c3b48b1e615b8c784c0916a56ea855c61a1986c3c",
+  "artifactDigest": "55cb04ae56ee4ee487d7c311e0a3b2f0d40593a4b70f239cea2da53e8c9fae98",
   "totalBytes": 761223,
   "installAssetBytes": 312974,
   "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
@@ -121,12 +121,12 @@
     {
       "path": "package-lock.json",
       "bytes": 4012,
-      "sha256": "aaaac8a34120f77082d0132b646c4ce6e6619aef5fcb9b90d4ea33260db59311"
+      "sha256": "b41e6877f6a8eeaa08eee8a00554e62de47dc4561469693b35179f1656912932"
     },
     {
       "path": "package.json",
       "bytes": 1175,
-      "sha256": "45f114b6c83807ea5b95172e6b7a815d1f6e15023d199539969010d876d4bdde"
+      "sha256": "d3842b74b60737d66130901f227a16c23a9c6c6330e2f124bcc468758cadf1d2"
     },
     {
       "path": "scripts/build-sheets.mjs",
@@ -318,7 +318,7 @@
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "ddf4ae61d8ae6671e8ae30cd5afbf797321c265a0f39459b1520fdad01796c36"
+      "sha256": "acc25e57e5417d492bb64ce86abcc6a1ae2ea694c638d038ad65e7b8b07e6faf"
     },
     {
       "path": "toolbar-icons.js",
