@@ -22,7 +22,10 @@
     "setup": "agentic-os setup",
     "doctor": "agentic-os doctor",
     "lane": "agentic-os start",
-    "land": "agentic-os land"
+    "land": "agentic-os land",
+    "successor": "agentic-os successor",
+    "release:common": "agentic-os release-common",
+    "sync:canonical": "agentic-os canonical-sync"
   },
   "devDependencies": {
     "agentic-design-system": "github:huijoohwee/agentic-design-system#8693ed5ac9a78086bd26cf412e2e734afebb24cb",
