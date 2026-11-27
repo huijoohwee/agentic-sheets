@@ -67,7 +67,11 @@ export async function buildSheetsArtifact() {
   const workbookPanel = await input('sheets/workbook-panel.mjs');
   const catalog = JSON.parse(await input('sheets/invocation-catalog.json'));
   const osSpec = JSON.parse(await readFile(join(root, 'package.json'))).devDependencies['agentic-os'];
-  if (osSpec !== 'github:' + catalog.owner + '#' + catalog.revision) throw new Error('Agentic OS catalog revision drift');
+  const osPins = new Set([
+    `github:${catalog.owner}#${catalog.revision}`,
+    `https://codeload.github.com/${catalog.owner}/tar.gz/${catalog.revision}`,
+  ]);
+  if (!osPins.has(osSpec)) throw new Error('Agentic OS catalog revision drift');
   const notices = await ownedAsset('notices', 'THIRD-PARTY-NOTICES.txt');
   const app = afterImports(files.get('app.mjs'), "import { mountInlineEditor } from '../design/inline-editor.mjs';\n");
   const panelImport = "import('./workbook-panel.mjs')";
