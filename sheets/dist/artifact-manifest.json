@@ -1,14 +1,14 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "de353210a28f0f107f474253729b8001493613b433c52cf7d55fb07a5dc80d00",
+  "sourceDigest": "e315f6ebf2d0e20c747d6741bd0f661ffac92704463fe7e9038a7f71ea517f74",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "c55014869eb1a43367f6f337badba06d5e338e0e94fedff5287119127dda1244",
+  "artifactDigest": "ee8a206716ad342f97e5d95ebd21eeb0d96fc1c12925b8744dccac5b1b5fee6d",
   "totalBytes": 761223,
   "installAssetBytes": 312974,
   "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
@@ -121,12 +121,12 @@
     {
       "path": "package-lock.json",
       "bytes": 4046,
-      "sha256": "68998c6c2fef3d8ea28085b13cb32ec3adeeaa10d9f93d405feaa8cf8ccbdea5"
+      "sha256": "550220581b988623a01c6da00515548eac4ee7b7e4afdc94aea89250b5547f6f"
     },
     {
       "path": "package.json",
       "bytes": 1346,
-      "sha256": "557de159c68323e6ce20eddb65b6ac79417205947f70de305126d601ebbe9f38"
+      "sha256": "4dbfef503ecd8b60f2deda94609a6df642676f4ecf0a2c0cb6a32ece20d3baef"
     },
     {
       "path": "scripts/build-sheets.mjs",
@@ -156,7 +156,7 @@
     {
       "path": "sheets/invocation-catalog.json",
       "bytes": 8008,
-      "sha256": "32b2fb2fc92918833ba43cc6c4129aec511b309136a2336a643c5f04ee5b03ea"
+      "sha256": "db2f7cea7e7f0c8005b68cb73a6b277fd40238b31f196315270330aa09b2dc16"
     },
     {
       "path": "sheets/LICENSE.design-system",
@@ -318,7 +318,7 @@
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "7dd064fb89e084b6fab1a5317c12a9694a8ef75e7721c94d3eef4deee0ecccd8"
+      "sha256": "aca7353a20ccf3972fd3496a5532ec1cdab0347762ef67d5b5f9f004c7d3437b"
     },
     {
       "path": "toolbar-icons.js",
