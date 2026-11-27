@@ -1,14 +1,14 @@
 {
   "schema": "sheets/artifact/v1",
   "contract": "sheets/workbook/v1",
-  "sourceDigest": "f3edba7478be59e5171770d4439f6b88cb71ebf74ff7100caeca7428926c4184",
+  "sourceDigest": "fe4836682182f904bb6a4c3a1fcb3e24039df6c2e0a5de98d8c42db5727b2627",
   "designSystem": {
     "revision": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSource": "690c1f104a4527605723c04ac6635248c94e4a86",
     "profileSha256": "ba95bb2de809f84c35aec409c89f305442b536741cbd0987d43ff8ecc6bf9e17",
     "licenseSha256": "9767f2bdb1c376fa5651e1623d885863b7d561253fe1662ddd5924aa51bb4fe6"
   },
-  "artifactDigest": "45b7acf4fc2ea950672cac3407d09ac8caed0f1354e9d30896ad1c543295c797",
+  "artifactDigest": "62b855fca5ec06b678f1acec9b027ae7e1844c68cf88206c9367b4c8c4cf1466",
   "totalBytes": 761223,
   "installAssetBytes": 312974,
   "baseRevision": "1d1299d0f717023f677b1d48414463dd101185f7",
@@ -120,18 +120,18 @@
     },
     {
       "path": "package-lock.json",
-      "bytes": 4012,
-      "sha256": "b41e6877f6a8eeaa08eee8a00554e62de47dc4561469693b35179f1656912932"
+      "bytes": 4046,
+      "sha256": "9aeb621e3832f58abd0838536169319e624142d87506fa8d430e296794b2958f"
     },
     {
       "path": "package.json",
-      "bytes": 1318,
-      "sha256": "481506549364ef88c666f5535a726c571c4031b6dd4acd33a5c1cad3dc88b002"
+      "bytes": 1346,
+      "sha256": "dbf335be0ef1b81ed8dd69fdf9503ff64b1be0c9a241b29cb42747b87c64164f"
     },
     {
       "path": "scripts/build-sheets.mjs",
-      "bytes": 9330,
-      "sha256": "9fa06e40d8f33f9fcb94bb28a2500a6efd7889b1aed633e2138079e4400e14d7"
+      "bytes": 9451,
+      "sha256": "72abac20946c9797f344268a209ad7c8cfe3fa7d91f0ecf1e89eac1f45964d28"
     },
     {
       "path": "sheets/app.mjs",
@@ -156,7 +156,7 @@
     {
       "path": "sheets/invocation-catalog.json",
       "bytes": 8008,
-      "sha256": "ab35d371c4f57d161210419306b4a745591659cc0cd05e1c7ed26d56e4e57f8e"
+      "sha256": "9d2504449e5f2748ac5a33f1ae9bef3b05adcda837298ee99c1488e20c1ffc8c"
     },
     {
       "path": "sheets/LICENSE.design-system",
@@ -318,7 +318,7 @@
     {
       "path": "sw.js",
       "bytes": 2492,
-      "sha256": "67257bdb6a41f6faca86c66bacd022fcd7f2e2a090ece06588b92bcda59ebe0b"
+      "sha256": "707b99c8f3806cf685d6ac2a5dcccb75355eca6dec368b6193733c1f9a647760"
     },
     {
       "path": "toolbar-icons.js",
